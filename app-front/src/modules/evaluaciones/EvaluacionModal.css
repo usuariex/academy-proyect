@@ -1,0 +1,155 @@
+/* ====== Modal general ====== */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100% ; 
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  position: relative;
+  background: #2a2a3d;
+  padding: 1rem;
+  border-radius: 12px;
+  width: 95%;
+  height: 92%;
+  overflow-y: auto;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+  color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #ff4d4d;
+}
+
+/* ====== Sección 1: métricas ====== */
+.metrics {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.metrics .card {
+  flex: 1;
+  background: #33334d;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.metrics .card:hover {
+  transform: translateY(-3px);
+  background: #3a3a55;
+}
+
+/* ====== Sección 2: tabs ====== */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 2px solid #444;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  color: #ccc;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s ease, border-bottom 0.2s ease;
+}
+
+.tabs button.active {
+  color: #4cafef;
+  border-bottom: 2px solid #4cafef;
+}
+
+.tabs button:hover {
+  color: #fff;
+}
+
+/* ====== Sección 3: contenido dinámico ====== */
+.tab-content {
+  flex: 1;
+  background: #1e1e2f;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+h3 {
+  margin-bottom: 0 1rem;
+  color: #4cafef;
+  font-size: 1.3rem;
+}
+
+.tab-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.tab-content li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #2a2a3d;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.tab-content li:hover {
+  background: #3a3a55;
+}
+
+.tab-content li button {
+  background: #4cafef;
+  border: none;
+  color: #fff;
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.tab-content li button:hover {
+  background: #3a9bdc;
+  transform: scale(1.05);
+}

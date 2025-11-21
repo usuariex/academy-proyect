@@ -1,0 +1,31 @@
+# Archivos compilados de Python
+*.pyc
+__pycache__/
+
+#--
+.venv/
+env/
+
+# Base de datos por defecto
+db.sqlite3
+
+# Configuración
+.env
+
+# Logs
+*.log
+
+# Migraciones cacheados
+*/migrations/__pycache__/
+
+# Cache de Django
+*.pot
+*.py~
+*.swp
+
+# Archivos estáticos generados
+staticfiles/
+media/
+
+.vscode/
+.idea/

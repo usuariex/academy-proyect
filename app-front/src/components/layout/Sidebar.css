@@ -1,0 +1,76 @@
+/* ====== Sidebar general ====== */
+.sidebar {
+  background: linear-gradient(180deg, #1f1f2e, #2a2a3d);
+  height: 100vh;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.3);
+  color: #f0f0f0;
+}
+
+/* Sidebar colapsado */
+.sidebar.collapsed {
+  width: 70px;
+}
+
+/* ====== Botón toggle ====== */
+.sidebar button {
+  background: none;
+  border: none;
+  color: #f0f0f0;
+  font-size: 1.2rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.sidebar button:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+/* ====== Navegación ====== */
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  color: #f0f0f0;
+  text-decoration: none;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+}
+
+.sidebar a:hover {
+  background-color: #33334d;
+  color: #ffffff;
+  border-left: 3px solid #4cafef;
+}
+
+/* Íconos */
+.sidebar a svg {
+  font-size: 1.2rem;
+}
+
+/* Ocultar texto cuando está colapsado */
+.sidebar.collapsed a span {
+  display: none;
+}
+
+/* ====== Animación de aparición ====== */
+.sidebar a span {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-5px); }
+  to { opacity: 1; transform: translateX(0); }
+}

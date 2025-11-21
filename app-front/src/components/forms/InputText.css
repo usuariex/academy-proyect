@@ -1,0 +1,16 @@
+.input-text-container {
+  margin-bottom: 1rem;
+}
+
+.input-text-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.input-text-field {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
