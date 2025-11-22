@@ -3,11 +3,10 @@ from .models import Alumno, Sexo
 
 
 class AlumnoSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='alumno_id', read_only=True)   
     class Meta:
         model = Alumno
-        fields = '__all__'
-        read_only_fields = ('alumno_id', 'fecha_registro')
-
+        fields = ['id', 'nombres', 'nombre_completo', 'fecha_nacimiento', 'sexo', 'email', 'celular', 'estado', 'peso', 'estatura', 'dni', 'activo', 'fecha_registro']
 
 
 class SexoSerializer(serializers.ModelSerializer):

@@ -37,7 +37,7 @@ class AlumnoConsultaViewSet(viewsets.ReadOnlyModelViewSet):
             qs = qs.filter(nota__lt=11)
 
         if search:
-            qs = qs.filter(nombre__icontains=search)
+            qs = qs.filter(nombres__icontains=search)
 
         return qs
 

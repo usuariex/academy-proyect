@@ -4,8 +4,9 @@ from django.core.validators import MinValueValidator
 
 class Alumno(models.Model):
     alumno_id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50, db_index=True)
-    apellido = models.CharField(max_length=50, db_index=True)
+    nombres = models.CharField(max_length=50, db_index=True)
+    apellido_paterno = models.CharField(max_length=50, db_index=True)
+    apellido_materno = models.CharField(max_length=50)
     fecha_nacimiento = models.DateField()
     email = models.CharField(unique=True, max_length=100, blank=True, null=True)
     celular = models.CharField(max_length=20, blank=True, null=True)
@@ -18,6 +19,10 @@ class Alumno(models.Model):
     dni = models.CharField(unique=True, max_length=12)
     activo = models.BooleanField(default=True) 
     fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def nombre_completo(self):
+        return f"{self.nombres} {self.apellido_paterno} {self.apellido_materno}"
 
     class Meta:
         managed = False

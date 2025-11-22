@@ -1,6 +1,8 @@
 
 export interface Evaluacion {
   id: number;
-  nombre: string;
-  fecha: string;
+  descripcion: string;
+  fecha_planificada: string;
+  estado?: string;           
+  tipo?: string;             
 }

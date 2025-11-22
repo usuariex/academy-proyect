@@ -1,8 +1,98 @@
 :root {
-
+  --color-primary-title: #4cafef;
 }
+
+
+* {
+  margin: 0;
+  padding: 0;
+  border: none;
+  /* box-sizing: border-box; */
+}
+
+/* picture,
+video,
+iframe,
+figure,*/
+img{
+  max-width: 100%;
+  /* display: block;
+  width: 100%;
+  object-fit: cover;
+  object-position: center center; */
+}
+
+
+li {
+  list-style: none;
+}
+
+
+/* form,
+label,
+select,
+button, */
+input,
+textarea{
+  font-family: inherit;
+  font-size: inherit;
+  background-color: transparent;
+  
+ /*  display: block;
+  color: inherit;
+  hyphens: auto;
+  appearance: none; */
+}
+
 
 body {
-  margin: 0;
+  min-height: 100vh;
+  font-size: 100%;
+  
+  /* line-height: 1.4rem;
+  color: ;
+  background-color: ;
+  font-smooth: always; */
 }
 
+
+
+/* RESETS OPCIONALES
+
+table , tr , td{
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+svg{
+  width: 100%;
+  display: block;
+  fill: currentColor;
+}
+
+h1 , h2 , h3 , h4 , h5 , h6 , span , a , strong , blockquote , i , b , u , em{
+  font-size: 1em;
+  font-weight: inherit;
+  font-style: inherit;
+  text-decoration: none;
+  color: inherit;
+}
+
+blockquote:before , blockquote:after , q:before , q:after{
+  content: "";
+  content: none;
+}
+
+html{
+  scroll-behavior: smooth;
+}
+
+a{
+  display: block;
+}
+
+p a{
+  display: inline;
+}
+
+*/

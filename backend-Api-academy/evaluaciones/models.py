@@ -1,6 +1,6 @@
 from django.db import models
-from alumnos.models import Alumno
-from alumnos.models import Sexo
+from alumnos.models import Alumno, Sexo
+from django.db.models import Max
 from django.core.validators import MinValueValidator
 
 
@@ -53,10 +53,13 @@ class CriteriosFijo(models.Model):
 
 
 class CriteriosRango(models.Model):
-    ejercicio = models.ForeignKey('Ejercicio', on_delete=models.PROTECT, db_index=True)
+    ejercicio = models.ForeignKey(
+        'Ejercicio', on_delete=models.PROTECT, db_index=True)
     sexo = models.ForeignKey(Sexo, on_delete=models.PROTECT, db_index=True)
-    valor_min = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
-    valor_max = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
+    valor_min = models.DecimalField(
+        max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
+    valor_max = models.DecimalField(
+        max_digits=6, decimal_places=2, validators=[MinValueValidator(0)])
     calificacion = models.DecimalField(max_digits=4, decimal_places=2)
     criterios_rango_id = models.AutoField(primary_key=True)
 
@@ -82,28 +85,38 @@ class Ejercicio(models.Model):
         db_table = 'ejercicio'
 
 
+
+
 class EvalConfigTeorica(models.Model):
     evaluacion_config_id = models.AutoField(primary_key=True)
-    evaluacion = models.ForeignKey('Evaluacion', on_delete=models.CASCADE, db_index=True)
-    config = models.ForeignKey('ConfigTeorica', on_delete=models.PROTECT, db_index=True)
+    evaluacion = models.ForeignKey(
+        'Evaluacion', on_delete=models.CASCADE, db_index=True)
+    config = models.ForeignKey(
+        'ConfigTeorica', on_delete=models.PROTECT, db_index=True)
 
     class Meta:
         managed = False
         db_table = 'eval_config_teorica'
         constraints = [
-            models.UniqueConstraint(fields=['evaluacion', 'config'], name='eval_config_uq') 
+            models.UniqueConstraint(
+                fields=['evaluacion', 'config'], name='eval_config_uq')
         ]
+
+
+
 
 
 class EvalFisicaEjercicio(models.Model):
     eval_fisica_ejercicio_id = models.AutoField(primary_key=True)
-    ejercicio = models.ForeignKey(Ejercicio, on_delete=models.PROTECT, db_index=True)
+    ejercicio = models.ForeignKey(
+        Ejercicio, on_delete=models.PROTECT, db_index=True)
     evaluacion_alumno = models.ForeignKey(
         'EvaluacionAlumno', on_delete=models.CASCADE, db_index=True)
     calificacion = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
-    session = models.ForeignKey('SessionFisica', on_delete=models.PROTECT, db_index=True)
+    session = models.ForeignKey(
+        'SessionFisica', on_delete=models.PROTECT, db_index=True)
     resultado = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
 
@@ -111,8 +124,11 @@ class EvalFisicaEjercicio(models.Model):
         managed = False
         db_table = 'eval_fisica_ejercicio'
         constraints = [
-            models.UniqueConstraint(fields=['ejercicio', 'evaluacion_alumno', 'session'], name='e_alum_session_ejercicio_uq')  # ← UNIQUE sobre 3 campos
+            models.UniqueConstraint(fields=['ejercicio', 'evaluacion_alumno', 'session'],
+                                    name='e_alum_session_ejercicio_uq') 
         ]
+
+
 
 
 class EvalTeoricaIntento(models.Model):
@@ -125,36 +141,54 @@ class EvalTeoricaIntento(models.Model):
         max_digits=5, decimal_places=2, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
 
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        mejor = EvalTeoricaIntento.objects.filter(
+            evaluacion_alumno=self.evaluacion_alumno
+        ).aggregate(Max('calificacion'))['calificacion__max']
+        self.evaluacion_alumno.calificacion_final = mejor
+        self.evaluacion_alumno.save(update_fields=['calificacion_final'])
+
     class Meta:
         managed = False
         db_table = 'eval_teorica_intento'
         constraints = [
-            models.UniqueConstraint(fields=['evaluacion_alumno', 'intento_num'], name='ealumno_inten_uq')
+            models.UniqueConstraint(
+                fields=['evaluacion_alumno', 'intento_num'], name='ealumno_inten_uq')
         ]
         indexes = [
-            models.Index(fields=['evaluacion_alumno', 'fecha_realizacion'], name='ealumno_fecha_idx') 
-        ]                                                                          
+            models.Index(fields=['evaluacion_alumno',
+                         'fecha_realizacion'], name='ealumno_fecha_idx')
+        ]
+
+
+
+
 
 
 class Evaluacion(models.Model):
     evaluacion_id = models.AutoField(primary_key=True)
-    tipo = models.ForeignKey(CatTipoEval, on_delete=models.PROTECT, db_index=True)
+    tipo = models.ForeignKey(
+        CatTipoEval, on_delete=models.PROTECT, db_index=True)
     fecha_planificada = models.DateField()
-    estado = models.ForeignKey(CatEstadoEval,on_delete=models.PROTECT, db_index=True)
+    estado = models.ForeignKey(
+        CatEstadoEval, on_delete=models.PROTECT, db_index=True)
     descripcion = models.TextField(blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'evaluacion'
         indexes = [
-            models.Index(fields=['tipo', 'fecha_planificada', 'estado'], name='tipo_fecha_estado_idx') 
+            models.Index(fields=['tipo', 'fecha_planificada',
+                         'estado'], name='tipo_fecha_estado_idx')
         ]
-    
 
 
 class EvaluacionAlumno(models.Model):
     evaluacion_alumno_id = models.AutoField(primary_key=True)
-    evaluacion = models.ForeignKey(Evaluacion, on_delete=models.PROTECT, db_index=True)
+    evaluacion = models.ForeignKey(
+        Evaluacion, on_delete=models.PROTECT, db_index=True)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, db_index=True)
     calificacion_final = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
@@ -163,7 +197,8 @@ class EvaluacionAlumno(models.Model):
         managed = False
         db_table = 'evaluacion_alumno'
         constraints = [
-            models.UniqueConstraint(fields=['alumno', 'evaluacion'], name='alum_id_eval_id_uq')
+            models.UniqueConstraint(
+                fields=['alumno', 'evaluacion'], name='alum_id_eval_id_uq')
         ]
 
 
