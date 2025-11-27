@@ -1,33 +1,29 @@
 // src/api/auth.ts
 
-// Mock de login: devuelve un usuario de prueba
+// Mock login: returns a demo user
 export const login = async (email: string, password: string) => {
   return {
     id: 1,
-    nombre: 'Usuario Demo',
-    rol: 'admin',
-    permisos: ['ver_alumnos', 'ver_pagos', 'ver_evaluaciones', 'ver_asistencia']
+    name: 'Usuario Demo', // 👈 texto visible en español
+    role: 'admin',
+    permissions: ['view_students', 'view_payments', 'view_evaluations', 'view_attendance', 'view_settings']
   };
 };
 
-// Mock de logout: simplemente limpia datos
+// Mock logout: simply clears data
 export const logout = () => {
-  console.log('Sesión cerrada');
+  console.log('Sesión cerrada'); // 👈 texto visible en español
 };
 
-// Mock de usuario actual
+// Mock current user
 export const getCurrentUser = async () => {
   return {
     id: 1,
-    nombre: 'Usuario Demo',
-    rol: 'admin',
-    permisos: ['ver_alumnos', 'ver_pagos', 'ver_evaluaciones', 'ver_asistencia']
+    name: 'Usuario Demo', // 👈 texto visible en español
+    role: 'admin',
+    permissions: ['view_students', 'view_payments', 'view_evaluations', 'view_attendance', 'view_settings']
   };
 };
-
-
-
-
 
 
 

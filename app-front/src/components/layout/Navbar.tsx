@@ -1,4 +1,3 @@
-
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
@@ -6,12 +5,12 @@ const Navbar = () => {
 
   return (
     <header className="navbar">
-      <div className="logo">Academia</div>
-      <input type="text" placeholder="Buscar..." />
+      <div className="logo">Academy</div>
+      <input type="text" placeholder="Search..." />
       <div className="actions">
-        <button>🔔</button> {/* Notificaciones */}
-        <span>{user?.nombre}</span>
-        <button onClick={logout}>Salir</button>
+        <button>🔔</button> {/* Notifications */}
+        <span>{user?.name}</span>
+        <button onClick={logout}>Logout</button>
       </div>
     </header>
   );

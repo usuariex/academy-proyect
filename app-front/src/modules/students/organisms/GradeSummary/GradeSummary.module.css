@@ -1,0 +1,14 @@
+.section {
+  padding: 12px;
+  background: #fff;
+  border-radius: 8px;
+}
+.title { margin: 0; }
+.grid {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+.item { text-align: center; }
+.value { font-weight: 700; }
+.label { color: #666; font-size: 13px; }

@@ -1,0 +1,54 @@
+.homePage {
+  padding: 2rem;
+}
+
+.homePage__title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.homePage__description {
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.homePage__links {
+  list-style: none;
+  padding: 0;
+}
+
+.homePage__links li {
+  margin-bottom: 0.5rem;
+}
+
+.homePage__links a {
+  text-decoration: none;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.homePage__links a:hover {
+  text-decoration: underline;
+}
+
+/* Layout general */
+.appLayout {
+  display: flex;
+  height: 100vh;
+}
+
+.appLayout__main {
+  display: flex;
+  flex-direction: row;
+}
+
+.appLayout__sidebar {
+  width: 250px; /* 👈 ancho fijo */
+  background-color: #f4f4f4;
+}
+
+.appLayout__content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}

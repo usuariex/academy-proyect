@@ -85,8 +85,6 @@ class Ejercicio(models.Model):
         db_table = 'ejercicio'
 
 
-
-
 class EvalConfigTeorica(models.Model):
     evaluacion_config_id = models.AutoField(primary_key=True)
     evaluacion = models.ForeignKey(
@@ -101,9 +99,6 @@ class EvalConfigTeorica(models.Model):
             models.UniqueConstraint(
                 fields=['evaluacion', 'config'], name='eval_config_uq')
         ]
-
-
-
 
 
 class EvalFisicaEjercicio(models.Model):
@@ -125,10 +120,8 @@ class EvalFisicaEjercicio(models.Model):
         db_table = 'eval_fisica_ejercicio'
         constraints = [
             models.UniqueConstraint(fields=['ejercicio', 'evaluacion_alumno', 'session'],
-                                    name='e_alum_session_ejercicio_uq') 
+                                    name='e_alum_session_ejercicio_uq')
         ]
-
-
 
 
 class EvalTeoricaIntento(models.Model):
@@ -140,7 +133,6 @@ class EvalTeoricaIntento(models.Model):
     calificacion = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
-
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -163,10 +155,6 @@ class EvalTeoricaIntento(models.Model):
         ]
 
 
-
-
-
-
 class Evaluacion(models.Model):
     evaluacion_id = models.AutoField(primary_key=True)
     tipo = models.ForeignKey(
@@ -175,6 +163,7 @@ class Evaluacion(models.Model):
     estado = models.ForeignKey(
         CatEstadoEval, on_delete=models.PROTECT, db_index=True)
     descripcion = models.TextField(blank=True, null=True)
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         managed = False

@@ -1,26 +1,27 @@
-/* ====== Sidebar general ====== */
+/* ====== Sidebar inside modal ====== */
 .sidebar {
-  background: linear-gradient(180deg, #1f1f2e, #2a2a3d);
-  height: 100vh;
+  background: #f9f9fb;              /* light background for consistency with modal */
+  height: 100%;                     /* takes full modal height */
   transition: width 0.3s ease;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   width: 220px;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.3);
-  color: #f0f0f0;
+  border-right: 1px solid #e0e0e0;  /* subtle separation */
+  color: #333;                      /* dark text for contrast */
+  border-radius: 8px 0 0 8px;       /* rounded corners */
 }
 
-/* Sidebar colapsado */
+/* Collapsed sidebar */
 .sidebar.collapsed {
   width: 70px;
 }
 
-/* ====== Botón toggle ====== */
+/* ====== Toggle button ====== */
 .sidebar button {
   background: none;
   border: none;
-  color: #f0f0f0;
+  color: #4cafef;                   /* primary blue */
   font-size: 1.2rem;
   padding: 1rem;
   cursor: pointer;
@@ -28,10 +29,11 @@
 }
 
 .sidebar button:hover {
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(76,175,239,0.1); /* soft hover */
+  border-radius: 6px;
 }
 
-/* ====== Navegación ====== */
+/* ====== Navigation ====== */
 .sidebar nav {
   display: flex;
   flex-direction: column;
@@ -41,31 +43,34 @@
 .sidebar a {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  color: #f0f0f0;
+  gap: 0.8rem;
+  padding: 0.8rem 1rem;
+  color: #333;
   text-decoration: none;
   font-weight: 500;
   border-left: 3px solid transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .sidebar a:hover {
-  background-color: #33334d;
-  color: #ffffff;
+  background-color: #eef6fc;        /* very light blue */
+  color: #4cafef;
   border-left: 3px solid #4cafef;
 }
 
-/* Íconos */
+/* Icons */
 .sidebar a svg {
   font-size: 1.2rem;
+  color: #4cafef;
 }
 
-/* Ocultar texto cuando está colapsado */
+/* Hide text when collapsed */
 .sidebar.collapsed a span {
   display: none;
 }
 
-/* ====== Animación de aparición ====== */
+/* ====== Fade-in animation ====== */
 .sidebar a span {
   animation: fadeIn 0.3s ease;
 }

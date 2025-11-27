@@ -1,19 +1,37 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
-import EvaluacionList from './modules/evaluaciones/EvaluacionList';
+import EvaluationList from './modules/evaluations/EvaluationList';
+import EvaluationsLayout from './modules/evaluations/EvaluationsLayout';
+import EvaluationWizard from './modules/evaluations/EvaluationWizard';
+import StudentsLayout from './modules/students/layouts/StudentsLayout/StudentsLayout';
+import StudentsPage from './modules/students/pages/StudentsPage/StudentsPage';
+import HomePage from './modules/home/pages/HomePage';
+import StudentsCreatePage from './modules/students/pages/StudentsCreatePage/StudentsCreatePage';
 
 function App() {
-
-
   return (
     <Router>
       <Routes>
-        {/* Ruta base "/" renderiza SexoList */}
-        <Route path="/" element={<Layout />} >
 
-        <Route path="evaluaciones" element={<EvaluacionList />} />
-        {/* <Route path="alumnos" element={<AlumnoList />} /> */}
+        {/* Ruta base con Layout general */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+
+          {/* Sección Evaluaciones con sub-layout */}
+          <Route path="evaluations" element={<EvaluationsLayout />}>
+            <Route index element={<EvaluationList />} />
+            <Route path="create" element={<EvaluationWizard />} />
+          </Route>
+
+
+          <Route path="students" element={<StudentsLayout />}>
+            <Route index element={<StudentsPage />} />
+            <Route path="create" element={<StudentsCreatePage />} />
+          </Route>
+          
+
         </Route>
+
       </Routes>
     </Router>
   )

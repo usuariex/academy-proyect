@@ -1,5 +1,5 @@
 import React from 'react';
-import './ConfirmModal.css'; // estilos externos opcionales
+/* import './ConfirmModal.css'; // estilos externos opcionales */
 
 interface ConfirmModalProps {
   visible: boolean;

@@ -1,0 +1,21 @@
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 16px;
+}
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.primary {
+  background: #2b7be4;
+  color: #fff;
+}
+.secondary {
+  background: #e0e0e0;
+  color: #222;
+}

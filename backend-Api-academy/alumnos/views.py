@@ -2,22 +2,22 @@
 
 from rest_framework import viewsets, permissions
 from .models import Alumno,Sexo
-from .serializers import AlumnoSerializer, SexoSerializer
+from .serializers import StudentSerializer, SexoSerializer, StudentDetailSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
 
 
-class AlumnoCRUDViewSet(viewsets.ModelViewSet):
+class StudentViewSet(viewsets.ModelViewSet):
     queryset = Alumno.objects.all()
     permission_classes = [permissions.AllowAny]  
-    serializer_class = AlumnoSerializer
+    serializer_class = StudentSerializer
 
 
 
-class AlumnoConsultaViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = AlumnoSerializer
+class StudentQueryViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = StudentSerializer
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
@@ -59,6 +59,8 @@ class AlumnoConsultaViewSet(viewsets.ReadOnlyModelViewSet):
 class SexoViewSet(viewsets.ModelViewSet):
     queryset = Sexo.objects.all()
     serializer_class = SexoSerializer
+    
 
-
-
+class StudentProfileViewSet(viewsets.ModelViewSet):
+    queryset = Alumno.objects.all()
+    serializer_class = StudentDetailSerializer

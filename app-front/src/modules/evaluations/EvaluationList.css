@@ -1,0 +1,48 @@
+/* ====== General container ====== */
+.evaluation-list {
+  background: #f9f9fb;              /* light background */
+  border-radius: 8px;
+  color: #333;                      /* dark text */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* ====== Title ====== */
+.evaluation-list > h2 {
+  margin-bottom: 1rem;
+  color: #4cafef;                   /* primary blue */
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+/* ====== List ====== */
+.evaluation-list > ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ====== Items ====== */
+.evaluation-list__li {
+  background: #fff;                 /* white background */
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Elegant hover */
+.evaluation-list__li:hover {
+  background: #eef6fc;              /* very light blue */
+  transform: translateX(4px);
+  border-color: #4cafef;
+}
+
+/* Highlighted text */
+.evaluation-list__li strong {
+  color: #333;
+  font-weight: 600;
+}

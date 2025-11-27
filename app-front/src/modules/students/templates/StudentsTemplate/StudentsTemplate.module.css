@@ -1,0 +1,32 @@
+.studentsTemplate {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.studentsTemplate__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.studentsTemplate__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.studentsTemplate__body {
+  display: flex;
+  flex: 1;
+}
+
+.studentsTemplate__panel {
+  flex: 0 0 20%;
+  border-left: 1px solid #ddd;
+  padding: 10px;
+}
+
+.studentsTemplate__panel--placeholder {
+  color: #888;
+  font-style: italic;
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Reporte de Rendimiento Académico</title>
+</head>
+
+<body>
+    <h1>REPORTE DE RENDIMIENTO ACADÉMICO</h1>
+    <div class="section">
+        <p><strong>Alumno: </strong> {{ alumno.nombre_completo }}</p>
+        <p><strong>DNI: </strong> {{ alumno.dni }}</p>
+        <p><strong>Periodo: </strong> {{ fecha_inicio }}  /  {{fecha_fin }}</p>
+
+    </div>
+
+    <div class="section">
+        <h2>EVALUACIÓN SIMULACRO</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for s in simulacros %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ s.fecha }}</td>
+                    <td>{{ s.descripcion }}</td>
+                    <td>{{ s.nota }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="promedios">
+            <h3>NOTA PROMEDIO</h3>
+            <p><strong>Promedio:</strong> {{ resumen.promedio }}</p>
+            <p><strong>Nota Mín:</strong> {{ resumen.minimo }}</p>
+            <p><strong>Nota Máx:</strong> {{ resumen.maximo }}</p>
+        </div>
+        <div></div>
+
+    </div>
+
+    <div class="section">
+        <h2>EVALUACIÓN FÍSICA</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>N°</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for f in fisicas %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ f.fecha }}</td>
+                    <td>{{ f.descripcion }}</td>
+                    <td>{{ f.nota }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

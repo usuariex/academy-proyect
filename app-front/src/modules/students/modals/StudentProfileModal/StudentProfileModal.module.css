@@ -1,0 +1,23 @@
+/* src/features/students/modals/StudentProfileModal.module.css */
+
+.modalCustom {
+  /* hereda tamaño del genérico, aquí solo personalizas */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* dos columnas */
+  gap: 1.25rem;
+}
+
+/* Si quieres un modal de pantalla completa para este caso */
+.fullScreen {
+  width: 100%;
+  max-width: none;
+  height: 100vh;
+  max-height: none;
+  border-radius: 0; /* sin bordes redondeados */
+}

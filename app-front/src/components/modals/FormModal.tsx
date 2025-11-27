@@ -1,5 +1,5 @@
 import React from 'react';
-import './FormModal.css'; // estilos externos opcionales
+/* import './FormModal.css'; // estilos externos opcionales */
 
 interface FormModalProps {
   visible: boolean;              // controla si se muestra

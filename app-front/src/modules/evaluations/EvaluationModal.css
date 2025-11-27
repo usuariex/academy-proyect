@@ -1,0 +1,299 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-content-eval {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 95%;
+  height: 92%;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.close-btn {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #555;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.close-btn:hover {
+  transform: rotate(90deg);
+  color: #000;
+}
+
+/* 🏷️ Title */
+.modal-content h3 {
+  margin-bottom: 1.5rem;
+  font-size: 24px;
+  font-weight: 600;
+  color: #222;
+}
+
+/* 📊 Metrics */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin: 20px 0 30px;
+}
+
+.metrics div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px;
+  border-radius: 10px;
+  background-color: #f9fafc;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  font-size: 15px;
+  color: #333;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.metrics div:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.metrics div .icon {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+/* Metrics colors */
+.metrics .ungraded   { background-color: #ececec; border-color: #666;}
+.metrics .graded     { background-color: #e0f7fa; border-color: #2196f3; }
+.metrics .failed     { background-color: #fdecea; border-color: #dc3545;}
+.metrics .passed     { background-color: #e6f9ed; border-color: #28a745; }
+
+
+
+/* 🔍 Search and filter */
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+/* 🔍 Caja de búsqueda */
+.controls__search {
+  position: relative;
+  width: 35%;
+  min-width: 250px;
+}
+
+
+/* 📋 Selector de filtro */
+.controls__filter select {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 140px;
+  transition: all 0.3s ease;
+}
+
+.controls__filter select:hover {
+  border-color: #4cafef;
+}
+
+.controls__filter select:focus {
+  border-color: #4cafef;
+  box-shadow: 0 0 6px rgba(76, 175, 239, 0.3);
+  outline: none;
+}
+
+
+
+
+/* 📑 Tabs */
+.tabs {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tabs span {
+  padding: 10px 0;
+  cursor: pointer;
+  font-weight: 500;
+  color: #666;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.tabs span:hover {
+  color: #4cafef;
+}
+.tabs span.active {
+  color: #4cafef;
+  border-bottom: 3px solid #4cafef;
+}
+
+/* 📋 General table styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f4f4f4;
+  font-weight: 600;
+  color: #333;
+}
+
+.table tr:hover {
+  background-color: #fafafa;
+}
+
+/* Inputs inside table */
+.table td input[type="number"] {
+  width: 80px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+/* 📊 Grades (with aside) */
+.grades {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.grades__aside {
+  width: 20%;
+  background: #f9fafc;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-size: 14px;
+  color: #333;
+}
+
+.grades__aside h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5rem;
+}
+
+.grades__aside ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.grades__aside li {
+  display:block;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px 12px;
+  transition: background-color 0.2s ease;
+}
+
+.grades__aside li:hover {
+  background-color: #f1faff;
+}
+
+.grades__aside .icon {
+  font-size: 16px;
+  color: #4cafef;
+}
+
+.grades__table {
+  flex: 1;
+}
+
+/* 📝 Evaluate (table full width) */
+.evaluate {
+  width: 100%;
+}
+
+.evaluate__table {
+  width: 100%;
+}
+
+/* 🎨 Status */
+.status {
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-block;
+}
+.status.ungraded   { color: #6c757d; }
+.status.passed     { color: #28a745; }
+.status.failed     { color: #dc3545; }
+
+/* 🔘 Buttons */
+.grade__action button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.grade__action button:hover {
+  transform: translateY(-2px);
+}
+
+.btn-edit {
+  background-color: #4cafef;
+  color: white;
+}
+.btn-edit:hover {
+  background-color: #2196f3;
+}
+
+.btn-grade {
+  background-color: #28a745;
+  color: white;
+}
+.btn-grade:hover {
+  background-color: #218838;
+}

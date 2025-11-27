@@ -1,4 +1,4 @@
-import SexoList from './SexoList';
-import SexoForm from './SexoForm';
+import SexoList from './GenderList';
+import SexoForm from './GenderForm';
 
 export { SexoList, SexoForm };

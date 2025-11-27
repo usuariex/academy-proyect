@@ -1,0 +1,41 @@
+.studentsLayout {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.studentsLayout__title {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.studentsLayout__nav {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.studentsLayout__navLink {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.studentsLayout__navLink:hover {
+  background-color: #eaeaea;
+}
+
+.studentsLayout__navLink--active {
+  background-color: #007bff;
+  color: white;
+}
+
+.studentsLayout__content {
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
