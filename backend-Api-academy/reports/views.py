@@ -6,18 +6,19 @@ from rest_framework.response import Response
 from django.utils.dateparse import parse_date
 from .services import generate_academic_report_pdf
 
+
 class AcademicReportView(APIView):
     def get(self, request):
-        alumno_id = request.query_params.get("alumno_id")
+        alumno_uuid = request.query_params.get("alumno_id")
         fecha_inicio = parse_date(request.query_params.get("fecha_inicio"))
         fecha_fin = parse_date(request.query_params.get("fecha_fin"))
         output = request.query_params.get("output", "json")
 
-        if not alumno_id or not fecha_inicio or not fecha_fin:
+        if not alumno_uuid or not fecha_inicio or not fecha_fin:
             return Response({"error": "Faltan parámetros obligatorios"}, status=400)
 
         try:
-            alumno = Alumno.objects.get(pk=alumno_id)
+            alumno = Alumno.objects.get(alumno_uuid=alumno_uuid)
         except Alumno.DoesNotExist:
             return Response({"error": "Alumno no encontrado"}, status=404)
 
@@ -64,5 +65,3 @@ class AcademicReportView(APIView):
             return response
 
         return Response(data)
-
-

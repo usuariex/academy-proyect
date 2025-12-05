@@ -1,0 +1,120 @@
+/* MetricsPanel.module.css */
+
+/* === Layout general === */
+.panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* === Header === */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.type {
+  font-weight: 600;
+  color: #2563eb; /* azul */
+}
+
+.date {
+  color: #334155;
+}
+
+.status {
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+/* === Counters === */
+.counters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.counter {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.counterLabel {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.counterValue {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+/* Colores diferenciados */
+.counter.approved .counterValue {
+  color: #16a34a; /* verde para aprobados */
+}
+
+.counter.failed .counterValue {
+  color: #dc2626; /* rojo para desaprobados */
+}
+
+.counter.ungraded .counterValue {
+  color: #6b7280; /* gris para sin calificar */
+}
+
+.counter.total .counterValue {
+  color: #1e293b; /* neutro para total */
+}
+
+/* === Stats === */
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.statItem {
+  flex: 1;
+  min-width: 120px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.statLabel {
+  font-size: 0.8rem;
+  color: #475569;
+}
+
+.statValue {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #0f172a;
+}

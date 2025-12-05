@@ -1,0 +1,32 @@
+.studentFilters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  font-family: Arial, sans-serif;
+}
+
+
+.studentFilters__select {
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.studentFilters__select:hover {
+  border-color: #999;
+}
+
+.studentFilters__select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+}
+
+/* Opciones dentro del select */
+.studentFilters__select option {
+  padding: 6px;
+}

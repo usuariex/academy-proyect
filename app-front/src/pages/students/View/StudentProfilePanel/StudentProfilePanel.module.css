@@ -1,0 +1,139 @@
+/* Contenedor principal del panel */
+.panel {
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin: 0 auto;
+  font-family: "Inter", system-ui, sans-serif;
+}
+
+
+.header {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  border-bottom: 2px solid #f0f0f0;
+  gap: 15px;
+  padding-bottom: 12px;
+}
+
+.header h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-align: center;
+  color: #222;
+}
+
+.status {
+  background: #e6f4ff;
+  color: #0077cc;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Layout de secciones */
+.sections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: end;
+}
+
+.sections>div {
+  position: relative;
+}
+
+
+.personalBlock,
+.contactBlock,
+.evaluationBlock {
+  background: #fafafa;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: box-shadow 0.2s ease;
+}
+
+.personalBlock:hover,
+.contactBlock:hover,
+.evaluationBlock:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+/* Títulos de cada sección */
+.personalBlock h4,
+.contactBlock h4,
+.evaluationBlock h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+/* Campos dentro de cada sección */
+.fieldRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fieldLabel {
+  font-weight: 500;
+  color: #555;
+}
+
+.fieldValue {
+  color: #222;
+}
+
+/* Botones de edición */
+.sectionActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.sectionActions button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.sectionActions button.edit {
+  background: #0077cc;
+  color: #fff;
+}
+
+.sectionActions button.save {
+  background: #28a745;
+  color: #fff;
+}
+
+.sectionActions button.cancel {
+  background: #dc3545;
+  color: #fff;
+}
+
+.sectionActions button:hover {
+  opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sections {
+    grid-template-columns: 1fr;
+  }
+}

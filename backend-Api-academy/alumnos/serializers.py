@@ -3,24 +3,28 @@ from .models import Alumno, Sexo, CatEstadoAlum, Domicilio, Distrito, Provincia,
 
 
 class RegionDetailSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source='region_id', read_only= True)
+    id = serializers.IntegerField(source='region_id', read_only=True)
     name = serializers.CharField(source='nombre')
+
     class Meta:
         model = Region
         fields = ['id', 'name']
 
+
 class ProvinceDetailSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(source='provincia_id', read_only= True)
+    id = serializers.IntegerField(source='provincia_id', read_only=True)
     name = serializers.CharField(source='nombre')
     region = RegionDetailSerializer()
+
     class Meta:
         model = Provincia
         fields = ['id', 'name', 'region']
 
+
 class DistrictDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='distrito_id', read_only=True)
     name = serializers.CharField(source='nombre')
-    province = ProvinceDetailSerializer(source ='provincia', read_only=True)
+    province = ProvinceDetailSerializer(source='provincia', read_only=True)
 
     class Meta:
         model = Distrito
@@ -31,15 +35,18 @@ class DomicilioDetailSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='domicilio_id', read_only=True)
     street = serializers.CharField(source='calle')
     district = DistrictDetailSerializer(source='distrito', read_only=True)
-    creatAt = serializers.DateTimeField(source='fecha_registro', read_only=True)
-    reference = serializers.CharField(source='referencia', allow_blank=True, allow_null=True)
+    createdAt = serializers.DateTimeField(
+        source='fecha_registro', read_only=True)
+    reference = serializers.CharField(
+        source='referencia', allow_blank=True, allow_null=True)
     """ revisar esta ppropiedad """
-    student = serializers.PrimaryKeyRelatedField(source='alumno', queryset=Alumno.objects.all())
-
+    student = serializers.PrimaryKeyRelatedField(
+        source='alumno', queryset=Alumno.objects.all())
 
     class Meta:
         model = Domicilio
-        fields = ['id', 'street', 'district', 'creatAt', 'reference', 'student']
+        fields = ['id', 'street', 'district',
+                  'createdAt', 'reference', 'student']
 
 
 class SexoSerializer(serializers.ModelSerializer):
@@ -53,6 +60,8 @@ class SexoSerializer(serializers.ModelSerializer):
 
 class StudentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(source='alumno_id', read_only=True)
+    uuid = serializers.UUIDField(source='alumno_uuid', read_only=True)
+    code = serializers.CharField(source='codigo_alumno', read_only=True)
     firstName = serializers.CharField(source='nombres')
     lastNameFather = serializers.CharField(source='apellido_paterno')
     lastNameMother = serializers.CharField(source='apellido_materno')
@@ -75,13 +84,12 @@ class StudentSerializer(serializers.ModelSerializer):
     genderName = serializers.CharField(
         source='sexo.sexo_nombre', read_only=True)
 
-    weight = serializers.DecimalField(
-        source='peso', max_digits=5, decimal_places=2, allow_null=True)
-    height = serializers.DecimalField(
-        source='estatura', max_digits=5, decimal_places=2)
+    weight = serializers.FloatField(
+        source='peso', allow_null=True)
+    height = serializers.FloatField(source='estatura')
     dni = serializers.CharField()
     isActive = serializers.BooleanField(source='activo')
-    creatAt = serializers.DateTimeField(
+    createdAt = serializers.DateTimeField(
         source='fecha_registro', read_only=True)
 
     fullName = serializers.CharField(source='nombre_completo', read_only=True)
@@ -105,7 +113,10 @@ class StudentSerializer(serializers.ModelSerializer):
             'height',
             'dni',
             'isActive',
-            'creatAt',
+            'createdAt',
+            'uuid',
+            'code'
+
         ]
 
 
@@ -114,7 +125,6 @@ class StudentDetailSerializer(StudentSerializer):
     sexo = SexoSerializer()
     evaluations = serializers.SerializerMethodField()
     address = DomicilioDetailSerializer(source="domicilio", read_only=True)
-
 
     class Meta(StudentSerializer.Meta):
         model = Alumno

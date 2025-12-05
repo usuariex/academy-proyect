@@ -1,19 +1,24 @@
 
 
 from rest_framework import viewsets, permissions
-from .models import Alumno,Sexo
+from .models import Alumno, Sexo
 from .serializers import StudentSerializer, SexoSerializer, StudentDetailSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
-
-
 class StudentViewSet(viewsets.ModelViewSet):
-    queryset = Alumno.objects.all()
-    permission_classes = [permissions.AllowAny]  
+    permission_classes = [permissions.AllowAny]
     serializer_class = StudentSerializer
+    lookup_field = "alumno_uuid"
+    lookup_url_kwarg = "uuid"
 
+    def get_queryset(self):
+        queryset = Alumno.objects.all()
+        is_active = self.request.query_params.get('isActive')
+        if is_active is not None:
+            queryset = queryset.filter(activo=is_active.lower() == 'true')
+        return queryset
 
 
 class StudentQueryViewSet(viewsets.ReadOnlyModelViewSet):
@@ -53,14 +58,13 @@ class StudentQueryViewSet(viewsets.ReadOnlyModelViewSet):
         })
 
 
-
-
-
 class SexoViewSet(viewsets.ModelViewSet):
     queryset = Sexo.objects.all()
     serializer_class = SexoSerializer
-    
+
 
 class StudentProfileViewSet(viewsets.ModelViewSet):
     queryset = Alumno.objects.all()
     serializer_class = StudentDetailSerializer
+    lookup_field = "alumno_uuid"
+    lookup_url_kwarg = "uuid"

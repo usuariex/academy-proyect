@@ -1,0 +1,30 @@
+.studentsTemplate {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.studentsTemplate__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.studentsTemplate__actions {
+  display: flex;
+}
+
+.studentsTemplate__body {
+  display: flex;
+  gap: 2rem;
+  flex: 1;
+}
+
+.studentsTemplate__panel {
+  flex: 0 0 20%;
+}
+
+.studentsTemplate__panel--placeholder {
+  color: #888;
+  font-style: italic;
+}

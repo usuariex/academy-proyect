@@ -1,5 +1,4 @@
-import FormModal from './FormModal';
-import ConfirmModal from './ConfirmModal';
-import Modal from './Modal';
+export * from './FormModal';
+export * from './ConfirmModal';
+export * from './Modal/Modal';
 
-export { FormModal, ConfirmModal, Modal };

@@ -1,0 +1,55 @@
+.evaluationList {
+  width: 100%;
+  background: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.thead {
+  background: #e5e5e5;
+  color: #ffffff;
+}
+
+.th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+}
+
+.tbody .tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.tr:hover {
+  background: #f1f5f9;
+}
+
+.td {
+  padding: 0.75rem 1rem;
+  color: #374151;
+}
+
+.selected {
+  background: #dbeafe;
+  /* azul claro */
+}
+
+.loading {
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.error {
+  color: #dc2626;
+  font-weight: 500;
+}

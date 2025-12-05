@@ -1,5 +1,6 @@
 from django.db import models
 from alumnos.models import Alumno, Sexo
+from academy.settings import UMBRAL_APROBACION
 from django.db.models import Max
 from django.core.validators import MinValueValidator
 
@@ -101,8 +102,8 @@ class EvalConfigTeorica(models.Model):
         ]
 
 
-class EvalFisicaEjercicio(models.Model):
-    eval_fisica_ejercicio_id = models.AutoField(primary_key=True)
+class EvaluacionFisica(models.Model):
+    id = models.AutoField(primary_key=True)
     ejercicio = models.ForeignKey(
         Ejercicio, on_delete=models.PROTECT, db_index=True)
     evaluacion_alumno = models.ForeignKey(
@@ -110,22 +111,20 @@ class EvalFisicaEjercicio(models.Model):
     calificacion = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
-    session = models.ForeignKey(
-        'SessionFisica', on_delete=models.PROTECT, db_index=True)
     resultado = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'eval_fisica_ejercicio'
+        db_table = 'evaluacion_fisica'
         constraints = [
-            models.UniqueConstraint(fields=['ejercicio', 'evaluacion_alumno', 'session'],
-                                    name='e_alum_session_ejercicio_uq')
+            models.UniqueConstraint(fields=['ejercicio', 'evaluacion_alumno'],
+                                    name='e_alum_ejercicio_uq')
         ]
 
 
-class EvalTeoricaIntento(models.Model):
-    intento_id = models.AutoField(primary_key=True)
+class EvaluacionTeorica(models.Model):
+    id = models.AutoField(primary_key=True)
     evaluacion_alumno = models.ForeignKey(
         'EvaluacionAlumno', on_delete=models.CASCADE, db_index=True)
     intento_num = models.IntegerField()
@@ -133,18 +132,11 @@ class EvalTeoricaIntento(models.Model):
     calificacion = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True)
     observaciones = models.TextField(blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        mejor = EvalTeoricaIntento.objects.filter(
-            evaluacion_alumno=self.evaluacion_alumno
-        ).aggregate(Max('calificacion'))['calificacion__max']
-        self.evaluacion_alumno.calificacion_final = mejor
-        self.evaluacion_alumno.save(update_fields=['calificacion_final'])
+    resultado = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'eval_teorica_intento'
+        db_table = 'evaluacion_teorica'
         constraints = [
             models.UniqueConstraint(
                 fields=['evaluacion_alumno', 'intento_num'], name='ealumno_inten_uq')
@@ -164,6 +156,8 @@ class Evaluacion(models.Model):
         CatEstadoEval, on_delete=models.PROTECT, db_index=True)
     descripcion = models.TextField(blank=True, null=True)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+    nombre = models.CharField(max_length=30)
+    codigo_evaluacion = models.CharField(max_length=30, unique=True)
 
     class Meta:
         managed = False
@@ -179,8 +173,6 @@ class EvaluacionAlumno(models.Model):
     evaluacion = models.ForeignKey(
         Evaluacion, on_delete=models.PROTECT, db_index=True)
     alumno = models.ForeignKey(Alumno, on_delete=models.CASCADE, db_index=True)
-    calificacion_final = models.DecimalField(
-        max_digits=5, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -190,14 +182,79 @@ class EvaluacionAlumno(models.Model):
                 fields=['alumno', 'evaluacion'], name='alum_id_eval_id_uq')
         ]
 
+    def get_status(self):
+        tipo_eval = self.evaluacion.tipo.tipo_nombre
+        if tipo_eval == "Teorica":
+            calificacion = EvaluacionTeorica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('calificacion', flat=True).first()
+        elif tipo_eval == "Fisica":
+            calificacion = EvaluacionFisica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('calificacion', flat=True).first()
+        else:
+            return "Sin calificar"
 
-class SessionFisica(models.Model):
-    session_id = models.AutoField(primary_key=True)
-    evaluacion = models.ForeignKey(
-        Evaluacion, on_delete=models.PROTECT, db_index=True)
-    fecha_realizacion = models.DateField(blank=True, null=True)
-    lugar = models.CharField(max_length=45, blank=True, null=True)
+        if calificacion is None:
+            return "Sin calificar"
+
+        # 👇 aquí añadimos el estado "Calificado"
+        if calificacion is not None:
+            if calificacion < UMBRAL_APROBACION:
+                return "Desaprobado"
+            else:
+                return "Aprobado"
+
+        return "Calificado"
+
+    def get_grade(self):
+        tipo_eval = self.evaluacion.tipo.tipo_nombre
+        if tipo_eval == "Teorica":
+            return EvaluacionTeorica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('calificacion', flat=True).first()
+        elif tipo_eval == "Fisica":
+            return EvaluacionFisica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('calificacion', flat=True).first()
+        return None
+
+    def get_result(self):
+        tipo_eval = self.evaluacion.tipo.tipo_nombre
+        if tipo_eval == "Teorica":
+            return EvaluacionTeorica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('resultado', flat=True).first()
+        elif tipo_eval == "Fisica":
+            return EvaluacionFisica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('resultado', flat=True).first()
+        return None
+
+    def get_observations(self):
+        tipo_eval = self.evaluacion.tipo.tipo_nombre
+        if tipo_eval == "Teorica":
+            return EvaluacionTeorica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('observaciones', flat=True).first()
+        elif tipo_eval == "Fisica":
+            return EvaluacionFisica.objects.filter(
+                evaluacion_alumno=self
+            ).values_list('observaciones', flat=True).first()
+        return None
+
+
+class SecuenciaEvaluacion(models.Model):
+    ultimo_numero = models.IntegerField(default=0)
 
     class Meta:
-        managed = False
-        db_table = 'session_fisica'
+        db_table = "secuencia_evaluacion"
+
+    @classmethod
+    def next_number(cls):
+        from django.db import transaction
+        with transaction.atomic():
+            secuencia = cls.objects.select_for_update().get(pk=1)
+            secuencia.ultimo_numero += 1
+            secuencia.save(update_fields=["ultimo_numero"])
+            return secuencia.ultimo_numero

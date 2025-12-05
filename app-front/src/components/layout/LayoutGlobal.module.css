@@ -1,0 +1,11 @@
+.appLayout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+
+.main__content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}

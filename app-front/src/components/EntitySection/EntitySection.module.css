@@ -1,0 +1,62 @@
+.section {
+    /* position: relative; */
+    padding: 16px 20px 48px;
+    /* espacio extra abajo para los botones */
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+.sectionHeader {
+    margin-bottom: 15px;
+}
+
+.sectionHeader h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Bloque de acciones en esquina inferior derecha */
+.actions {
+    position: absolute;
+    bottom: 12px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+}
+
+.actions button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.actions button.edit {
+    background: #0077cc;
+    color: #fff;
+}
+
+.actions button.save {
+    background: #28a745;
+    color: #fff;
+}
+
+.actions button.cancel {
+    background: #dc3545;
+    color: #fff;
+}
+
+.actions button:hover {
+    opacity: 0.9;
+}

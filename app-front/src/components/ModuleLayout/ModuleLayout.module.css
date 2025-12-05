@@ -1,0 +1,9 @@
+.moduleLayout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 1rem;
+}
+
+
+@media (max-width: 768px) {}

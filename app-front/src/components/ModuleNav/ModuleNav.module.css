@@ -1,0 +1,97 @@
+.navContainer {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1.5px solid #c5c5c5;
+    margin-bottom: 1.5rem;
+}
+
+/* Alignment */
+.left {
+    justify-content: flex-start;
+}
+
+.center {
+    justify-content: center;
+}
+
+.right {
+    justify-content: flex-end;
+}
+
+/* Size */
+.sm .tab {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+}
+
+.md .tab {
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+}
+
+.lg .tab {
+    font-size: 1.2rem;
+    padding: 0.8rem 1.2rem;
+}
+
+/* Variant: underline */
+.underline .tab {
+    border-bottom: 2px solid transparent;
+}
+
+.underline .active {
+    border-bottom: 2px solid #007bff;
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Variant: pill */
+.pill .tab {
+    background-color: transparent;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.pill .tab:hover {
+    background-color: #e6f1e7;
+}
+
+.pill .active {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Variant: none */
+.none .tab {
+    border: none;
+}
+
+.none .active {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/* Tab base */
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: #555;
+    transition: color 0.2s ease;
+}
+
+.tab:hover {
+    color: #333;
+}
+
+.icon {
+    display: flex;
+    font-size: 1rem;
+}
+
+.label {
+    white-space: nowrap;
+}
