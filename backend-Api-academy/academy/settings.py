@@ -22,9 +22,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 
-#CUSTOM SETTINGS
+# CUSTOM SETTINGS
 UMBRAL_APROBACION = 11
-
 
 
 SECRET_KEY = 'django-insecure-x*(1t8w%+0u!#h$k%!o)gh3abma3x2@4t#6u$c+#9=i&&a)7y8'
@@ -46,10 +45,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'alumnos',      
+    'alumnos',
     'evaluaciones',
-    'reports',   
+    'reports',
+    'users',
+
 ]
+
+AUTH_USER_MODEL = 'users.User'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
