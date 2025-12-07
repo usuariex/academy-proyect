@@ -1,0 +1,118 @@
+.searchBar {
+  width: 100%;
+  display: block;
+}
+
+
+.searchBarContent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  border: 1px solid rgb(161, 161, 161);
+}
+
+
+.input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  padding: 5px 12px;
+  padding-right: 96px;
+  background: transparent;
+  color: inherit;
+  box-sizing: border-box;
+}
+
+
+.clearBtn {
+  position: absolute;
+  right: 48px;
+
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.searchBtn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--muted);
+}
+
+.searchBarContent:focus-within {
+  border-color: var(--accent, #3b82f6);
+  box-shadow: 0 0 0 4px rgba(59, 131, 246, 0.239);
+  border: 1px solid rgb(161, 161, 161);
+}
+
+
+.clearBtn:hover,
+.searchBtn:hover {
+  color: #111827;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 6px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+
+/* Alternativas para el conteiner */
+.conteinerSmall {
+  width: 60%;
+  max-width: 100%;
+  min-width: 240px;
+
+}
+
+
+
+
+
+
+@media (max-width: 640px) {
+  .grades__filters {
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .clearBtn {
+    right: 44px;
+  }
+
+  .searchBtn {
+    right: 6px;
+  }
+
+  .input {
+    padding-right: 84px;
+  }
+}

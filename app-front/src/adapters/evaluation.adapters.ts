@@ -1,11 +1,12 @@
 
-import type { EvaluationSummaryResponse, EvaluationResponse } from '@/models/';
+import type { EvaluationResponse, Evaluation } from '@/models/';
+import type { EvaluationSummary, EvaluationSummaryResponse } from '@evaluations/models/';
 
 
 
-/* onserbada kiza fuera de uso */
+
 export interface Metrics {
-  evaluationId: number;
+  code: string;
   name: string;
   type: string;
   plannedDate: string | null;
@@ -22,9 +23,10 @@ export interface Metrics {
   statusDistribution: { label: string; percent: number }[];
 }
 
-/**
- * Mapea la respuesta del backend al formato que consume MetricsPanel.
- */
+
+
+
+
 export const mapSummaryToMetrics = (src: EvaluationSummaryResponse): Metrics => {
   const gradeDistribution = Object.entries(src.gradeDistribution).map(([label, count]) => ({
     label,
@@ -37,7 +39,7 @@ export const mapSummaryToMetrics = (src: EvaluationSummaryResponse): Metrics => 
   }));
 
   return {
-    evaluationId: src.evaluationId,
+    code: src.code,
     name: src.evaluationName,
     type: src.evaluationType,
     plannedDate: src.plannedDate,
@@ -57,38 +59,44 @@ export const mapSummaryToMetrics = (src: EvaluationSummaryResponse): Metrics => 
 
 
 
-export const mapEvaluationSummaryResponse = (data: any): EvaluationSummaryResponse => ({
-  evaluationId: data.evaluationId,
-  evaluationName: data.evaluationName,
-  evaluationType: data.evaluationType,
-  plannedDate: data.plannedDate,
-  statusName: data.statusName,
-  totalStudents: data.totalStudents,
-  approved: data.approved,
-  failed: data.failed,
-  ungraded: data.ungraded,
-  averageGrade: data.averageGrade,
-  maxGrade: data.maxGrade,
-  minGrade: data.minGrade,
-  medianGrade: data.medianGrade,
-  gradeDistribution: data.gradeDistribution,
-  statusDistribution: data.statusDistribution,
-});
+export const EvaluationSummaryAdapter = (data: EvaluationSummaryResponse) => {
+  const formatedResponse: EvaluationSummary = {
+    code: data.code,
+    evaluationName: data.evaluationName,
+    evaluationType: data.evaluationType,
+    plannedDate: data.plannedDate,
+    statusName: data.statusName,
+    totalStudents: data.totalStudents,
+    approved: data.approved,
+    failed: data.failed,
+    ungraded: data.ungraded,
+    averageGrade: data.averageGrade,
+    maxGrade: data.maxGrade,
+    minGrade: data.minGrade,
+    medianGrade: data.medianGrade,
+    gradeDistribution: data.gradeDistribution,
+    statusDistribution: data.statusDistribution,
+  }
+  return formatedResponse
+};
 
 
 
-/* CHECKED */
-export function EvaluationResponseAdapter(item: any): EvaluationResponse {
-  return {
-    id: item.id,
-    evalCode: item.code,
-    name: item.name,
-    typeId: item.typeId,
-    typeName: item.typeName,
-    plannedDate: item.plannedDate,
-    description: item.description ?? "",
-    statusId: item.statusId,
-    statusName: item.statusName,
-    createdAt: item.createdAt,
+export const EvaluationAdapter = (data: EvaluationResponse) => {
+  const formatedEvaluation: Evaluation = {
+    code: data.code,
+    name: data.name,
+    typeId: data.typeId,
+    typeName: data.typeName,
+    plannedDate: data.plannedDate,
+    description: data.description ?? "",
+    statusId: data.statusId,
+    statusName: data.statusName,
+    createdAt: data.createdAt,
   };
+  return formatedEvaluation
 }
+
+
+
+

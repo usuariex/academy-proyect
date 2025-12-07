@@ -3,7 +3,7 @@ import type { GenderResponse } from "@/models";
 
 
 export const getGenders = async (): Promise<GenderResponse[]> => {
-  const res = await api.get('alumnos/sexos/');
+  const res = await api.get('students/genders/');
   return res.data;
 };
 

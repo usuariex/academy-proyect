@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "./StudentsCreateView.module.css";
 import { useCreateStudent } from "@students/hooks";
 import type { StudentRequest } from "@/models";
-import { SelectField } from "@/components/SelectField/SelectField";
+import { SelectField } from "@/components/forms";
 import { useGenders } from "@/hooks/gender";
 
 export const StudentsCreateView: React.FC = () => {
@@ -10,8 +10,8 @@ export const StudentsCreateView: React.FC = () => {
 
   const initialFormData: StudentRequest = {
     firstName: "",
-    lastNameFather: "",
-    lastNameMother: "",
+    paternalSurname: "",
+    maternalSurname: "",
     birthDate: "",
     email: "",
     phone: "",
@@ -88,17 +88,17 @@ export const StudentsCreateView: React.FC = () => {
 
             <div className={styles.studentsCreatePage__formGroup}>
               <label>Apellido paterno:</label>
-              <input id="lastNameFather"
+              <input id="paternalSurname"
                 type="text"
-                value={formData.lastNameFather}
+                value={formData.paternalSurname}
                 onChange={handleChange} required />
             </div>
 
             <div className={styles.studentsCreatePage__formGroup}>
               <label>Apellido materno:</label>
-              <input id="lastNameMother"
+              <input id="maternalSurname"
                 type="text"
-                value={formData.lastNameMother}
+                value={formData.maternalSurname}
                 onChange={handleChange} required />
             </div>
 

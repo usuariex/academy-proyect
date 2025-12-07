@@ -3,8 +3,11 @@ import type { AxiosResponse } from "axios";
 import type {
   StudentResponse,
   StudentRequest,
-  StudentProfileResponse
+  StudentProfileResponse,
+  StudentsServiceResult,
+  PaginatedResponse
 } from "@/models";
+import { StudentsEvaluationAdapter } from "@/adapters";
 
 
 export const getStudents = async (
@@ -12,8 +15,8 @@ export const getStudents = async (
 ): Promise<StudentResponse[]> => {
   try {
     const url = isActive !== undefined
-      ? `alumnos/?isActive=${isActive}`
-      : "alumnos/";
+      ? `students/?isActive=${isActive}`
+      : "students/";
 
     const res = await api.get<StudentResponse[]>(url);
     return res.data;
@@ -25,15 +28,65 @@ export const getStudents = async (
 
 
 
+
+export const getStudentsByEvaluation = async (
+  code: string,
+  page = 1,
+  pageSize = 20
+): Promise<StudentsServiceResult> => {
+  const url = `/evaluations/${encodeURIComponent(code)}/students/`;
+  const { data } = await api.get<PaginatedResponse>(url, {
+    params: { page, page_size: pageSize },
+  });
+
+  const items = Array.isArray(data.results) ? StudentsEvaluationAdapter(data.results) : [];
+  return { raw: data, items };
+};
+
+
+
+
+
+
+
 export const getStudentProfile = async (uuid: string): Promise<StudentProfileResponse> => {
   try {
-    const res: AxiosResponse<StudentProfileResponse> = await api.get<StudentProfileResponse>(`alumnos/perfiles/${uuid}/`);
+    const res: AxiosResponse<StudentProfileResponse> = await api.get<StudentProfileResponse>(`students/profiles/${uuid}/`);
     return res.data;
   } catch (error) {
     console.error("Error al obtener perfil del alumno", error);
     throw error;
   }
 };
+
+export async function createStudent(data: StudentRequest): Promise<StudentResponse> {
+  const res = await api.post<StudentResponse>("students/", data);
+  return res.data;
+}
+
+
+
+
+
+
+export const deactivateStudent = async (uuid: string): Promise<void> => {
+  try {
+    await api.patch(`students/${uuid}/`, { isActive: false });
+  } catch (error) {
+    console.error("Error al desactivar estudiante", error);
+    throw error;
+  }
+};
+
+
+
+export const deleteStudent = async (uuid: string): Promise<void> => {
+  await api.delete(`students/${uuid}/`);
+};
+
+
+
+/* ============================================================== */
 
 
 
@@ -43,7 +96,7 @@ export async function patchStudentProfile(
   payload: Record<string, any>
 ): Promise<StudentProfileResponse> {
   try {
-    const { data } = await api.patch<StudentProfileResponse>(`alumnos/perfiles/${uuid}/`, payload);
+    const { data } = await api.patch<StudentProfileResponse>(`students/profiles/${uuid}/`, payload);
     return data;
   } catch (error) {
     console.error("Error al actualizar perfil:", error);
@@ -53,34 +106,6 @@ export async function patchStudentProfile(
 
 
 
-
-
-export const deactivateStudent = async (uuid: string): Promise<void> => {
-  try {
-    await api.patch(`alumnos/${uuid}/`, { isActive: false });
-  } catch (error) {
-    console.error("Error al desactivar estudiante", error);
-    throw error;
-  }
-};
-
-
-
-
-
-
-/* ============================================================== */
-
-export const deleteStudent = async (uuid: string): Promise<void> => {
-  await api.delete(`alumnos/${uuid}/`);
-};
-
-
-
-export async function createStudent(data: StudentRequest): Promise<StudentResponse> {
-  const res = await api.post<StudentResponse>("alumnos/", data);
-  return res.data;
-}
 
 
 
@@ -110,9 +135,6 @@ export async function createStudent(data: StudentRequest): Promise<StudentRespon
             };
             
             */
-
-
-
 
 
 

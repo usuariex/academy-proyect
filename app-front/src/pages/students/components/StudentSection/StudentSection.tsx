@@ -1,5 +1,5 @@
-import { EntitySection } from "@/components";
-import { useSectionEditing } from "@/hooks";
+import { EntitySection } from "@/components/data-display";
+import { useSectionEditing } from "@/hooks/students";
 import { patchStudentProfileAdapter } from "@/adapters";
 import { patchStudentProfile } from "@/services";
 import type { StudentProfileResponse, SectionSchema } from "@/models";

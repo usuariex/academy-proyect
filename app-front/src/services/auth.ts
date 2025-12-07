@@ -1,14 +1,35 @@
-// src/api/auth.ts
 
-// Mock login: returns a demo user
-export const login = async (email: string, password: string) => {
-  return {
-    id: 1,
-    name: 'Usuario Demo', // 👈 texto visible en español
-    role: 'admin',
-    permissions: ['view_students', 'view_payments', 'view_evaluations', 'view_attendance', 'view_settings']
-  };
+export const login = async (data: { username: string; password: string }) => {
+  const response = await fetch("http://localhost:8000/api/login/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Credenciales inválidas");
+  }
+
+  return response.json(); // { token, role }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Mock logout: simply clears data
 export const logout = () => {

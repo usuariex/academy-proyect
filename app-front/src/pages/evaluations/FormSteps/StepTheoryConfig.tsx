@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { EvaluationConfigRequest } from "../../../models";
-import '../FormSteps.css';
+import type { EvaluationConfigRequest } from "@/models";
+import './FormSteps.css';
 
 
 interface Props {

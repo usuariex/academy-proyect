@@ -1,8 +1,8 @@
-import type { GenderResponse, GenderSelectOption } from "@/models";
+import type { GenderResponse, SelectOption } from "@/models";
 
-export const genderResponseAdapter = (data: GenderResponse[]): GenderSelectOption[] => {
+export const genderResponseAdapter = (data: GenderResponse[]): SelectOption[] => {
     return data.map((item) => ({
-        label: item.nombre,
+        label: item.name,
         value: String(item.id),
     }));
 };

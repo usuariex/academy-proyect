@@ -42,6 +42,9 @@
       "@students/*": [
         "pages/students/*"
       ],
+      "@auth/*": [
+        "pages/auth/*"
+      ],
     }
   },
   "include": [

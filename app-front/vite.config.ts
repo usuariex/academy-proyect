@@ -11,6 +11,7 @@ export default defineConfig({
       '@components': path.resolve(__dirname, 'src/components'),
       '@students': path.resolve(__dirname, 'src/pages/students'),
       '@evaluations': path.resolve(__dirname, 'src/pages/evaluations'),
+      '@auth': path.resolve(__dirname, 'src/pages/auth'),
 
     },
   },

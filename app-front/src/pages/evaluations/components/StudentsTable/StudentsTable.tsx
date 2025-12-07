@@ -7,7 +7,7 @@ interface Props {
   onOpenEdit: (student: StudentEvaluation) => void;
 }
 
-const StudentsTable: React.FC<Props> = ({ students, /* onOpenEdit  */}) => {
+const StudentsTable: React.FC<Props> = ({ students, /* onOpenEdit  */ }) => {
   return (
     <div className={styles.tableWrapper}>
       <table className={styles.table}>
@@ -22,19 +22,18 @@ const StudentsTable: React.FC<Props> = ({ students, /* onOpenEdit  */}) => {
         </thead>
         <tbody>
           {students.map((s) => (
-            <tr key={s.studentEvaluationId}>
-              <td>{s.fullName}</td>
+            <tr key={s.studentUuid}>
+              <td>{s.studentFullName}</td>
               <td>
                 <span
-                  className={`${styles.status} ${
-                    s.status === 'Aprobado'
-                      ? styles.aprobado
-                      : s.status === 'Desaprobado'
+                  className={`${styles.status} ${s.status === 'Aprobado'
+                    ? styles.aprobado
+                    : s.status === 'Desaprobado'
                       ? styles.desaprobado
                       : s.status === 'Sin calificar'
-                      ? styles.sinCalificar
-                      : styles.calificado
-                  }`}
+                        ? styles.sinCalificar
+                        : styles.calificado
+                    }`}
                 >
                   {s.status}
                 </span>

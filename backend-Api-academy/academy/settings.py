@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,8 +31,7 @@ SECRET_KEY = 'django-insecure-x*(1t8w%+0u!#h$k%!o)gh3abma3x2@4t#6u$c+#9=i&&a)7y8
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+# DEBUG = False
 
 
 # Application definition
@@ -45,14 +45,34 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'alumnos',
-    'evaluaciones',
+    'students',
+    'evaluations',
     'reports',
     'users',
 
 ]
 
 AUTH_USER_MODEL = 'users.User'
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.AllowAny",
+        # "rest_framework.permissions.IsAuthenticated",
+    ),
+}
+
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 
 MIDDLEWARE = [
@@ -66,6 +86,11 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
 ]
 
+
+CORS_ALLOW_CREDENTIALS = True
+
+# en producción, añadir dominio real.
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -134,6 +159,10 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
+# LANGUAGE_CODE = "es"
+# TIME_ZONE = "America/Lima"
+
+
 USE_I18N = True
 
 USE_TZ = True
@@ -148,3 +177,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+"""
+EN PRODUCCION
+
+ SECRET_KEY:  usa variables de entorno (os.environ.get("SECRET_KEY")).
+
+DEBUG = True:  En producción debe ser False.
+
+Contraseña de DB:  usa variables de entorno.
+
+CORS_ALLOWED_ORIGINS:  limita solo a tu dominio frontend. """

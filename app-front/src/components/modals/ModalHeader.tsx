@@ -16,3 +16,6 @@ const ModalHeader: React.FC<Props> = ({ title, onClose }) => (
 );
 
 export default ModalHeader;
+
+
+/* Ver si se usa o borrar */

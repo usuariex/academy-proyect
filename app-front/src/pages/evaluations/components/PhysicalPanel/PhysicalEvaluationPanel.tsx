@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+/* import React, { useMemo } from 'react'; */
 import type { StudentEvaluation } from '@/models';
 import styles from './PhysicalEvaluationPanel.module.css';
-import { useStudentMutations } from '@/hooks/useStudentMutations';
+/* import { useStudentMutations } from '@/hooks/students'; */
 
 interface Props {
   students: StudentEvaluation[];
@@ -9,21 +9,21 @@ interface Props {
   onOpenEdit?: (student: StudentEvaluation) => void;
 }
 
-export const PhysicalEvaluationPanel: React.FC<Props> = ({ students, evalCode, onOpenEdit }) => {
-  const { gradeMutation/* , editMutation */ } = useStudentMutations(evalCode);
-
-  const byReps = useMemo(
-    () => students.slice().sort((a, b) => (b.reps ?? 0) - (a.reps ?? 0)),
-    [students]
-  );
+export const PhysicalEvaluationPanel: React.FC<Props> = ({ students,/*  evalCode, */ onOpenEdit }) => {
+  /*  const { gradeMutation, editMutation } = useStudentMutations(evalCode);
+ 
+   const byReps = useMemo(
+     () => students.slice().sort((a, b) => (b.reps ?? 0) - (a.reps ?? 0)),
+     [students]
+   ); */
 
   /*  const handleRecord = (studentEvaluationId: number, reps?: number, seconds?: number) => {
      editMutation.mutate({ studentEvaluationId, payload: { reps, seconds } });
    }; */
 
-  const handleGrade = (studentEvaluationId: number, grade: number) => {
+  /* const handleGrade = (studentEvaluationId: number, grade: number) => {
     gradeMutation.mutate({ studentEvaluationId, finalGrade: grade });
-  };
+  }; */
 
   return (
     <div className={styles.container}>
@@ -43,16 +43,16 @@ export const PhysicalEvaluationPanel: React.FC<Props> = ({ students, evalCode, o
             </tr>
           </thead>
           <tbody>
-            {byReps.map((s) => (
-              <tr key={s.studentEvaluationId}>
-                <td>{s.fullName}</td>
-                <td>{s.reps ?? '—'}</td>
-                <td>{s.result ?? '—'}</td>
+            {students.map((s) => (
+              <tr key={s.studentUuid}>
+                <td>{s.studentFullName}</td>
                 <td>{s.grade ?? '—'}</td>
+                <td>{s.result ?? '—'}</td>
+                <td>{s.status ?? '—'}</td>
                 <td className={styles.actions}>
                   {s.status === 'Sin calificar' ? (
                     <button
-                      onClick={() => handleGrade(s.studentEvaluationId, 0)}
+                      /*  onClick={() => handleGrade(s.studentEvaluationId, 0)} */
                       className={`${styles.btn} ${styles.btnCalificar}`}
                     >
                       Calificar

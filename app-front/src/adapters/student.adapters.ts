@@ -1,7 +1,7 @@
 
-import type { Student, StudentEvaluation, StudentResponse } from '@/models';
+import type { Student, StudentEvaluation, StudentEvaluationResponse, StudentResponse } from '@/models';
 
-export const mapStudentsList = (data: any[]): StudentEvaluation[] =>
+/* export const mapStudentsList = (data: any[]): StudentEvaluation[] =>
   data.map((item) => ({
     studentEvaluationId: item.studentEvaluationId,
     evaluationId: item.evaluationId,
@@ -9,7 +9,7 @@ export const mapStudentsList = (data: any[]): StudentEvaluation[] =>
     studentId: item.studentId,
     names: item.names,
     fullName: item.fullName,
-    status: item.status as StudentEvaluation['status'], // tipado fuerte
+    status: item.status as StudentGradeStatus,
     grade: item.grade ?? null,
     result: item.result ?? null,
 
@@ -19,6 +19,10 @@ export const mapStudentsList = (data: any[]): StudentEvaluation[] =>
     attempts: item.attempts ?? null,
     observations: item.observations ?? null,
   }));
+ */
+
+
+
 
 
 
@@ -27,8 +31,8 @@ export function StudentResponseAdapter(data: StudentResponse): Student {
   return {
     id: data.id,
     firstName: data.firstName,
-    lastNameFather: data.lastNameFather,
-    lastNameMother: data.lastNameMother,
+    lastNameFather: data.paternalSurname,
+    lastNameMother: data.maternalSurname,
     fullName: data.fullName,
     birthDate: data.birthDate,
     email: data.email ?? "",
@@ -41,9 +45,35 @@ export function StudentResponseAdapter(data: StudentResponse): Student {
     height: data.height,
     dni: data.dni ?? "",
     isActive: data.isActive,
-    creatAt: data.creatAt,
+    createdAt: data.createdAt,
     uuid: data.uuid,
     code: data.code,
   };
 }
 
+
+
+
+
+
+
+export const mapRaw = (raw: StudentEvaluationResponse): StudentEvaluationResponse => {
+  return raw;
+};
+
+export const mapStudent = (raw: StudentEvaluationResponse): StudentEvaluation => {
+  return {
+    studentUuid: typeof raw.studentUuid === 'string' ? raw.studentUuid : '',
+    studentFullName: typeof raw.studentFullName === 'string' ? raw.studentFullName : '',
+    grade: raw.grade ?? null,
+    result: raw.result ?? null,
+    observations: raw.observations ?? null,
+    exerciseName: raw.exerciseName ?? null,
+    theoryPerformedAt: raw.theoryPerformedAt ?? null,
+    theoryAttemptNumber: raw.theoryAttemptNumber ?? null,
+    status: raw.status ?? null,
+  };
+};
+
+export const StudentsEvaluationAdapter = (data: StudentEvaluationResponse[] = []): StudentEvaluation[] =>
+  data.map(mapStudent);

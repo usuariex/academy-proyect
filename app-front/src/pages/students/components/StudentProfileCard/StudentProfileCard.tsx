@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { FC } from 'react';
 import styles from './StudentProfileCard.module.css';
 import { useSelectedStudent } from "@students/hooks";
-import { Modal } from '@/components';
+import { Modal } from '@/components/modals';
 import { useStudentProfile } from '@students/hooks'
 import { StudentProfilePanel } from '@students/View'
 import { ReportsForm } from '@students/components'
@@ -20,7 +20,7 @@ export const StudentProfileCard: FC = () => {
   const { selectedStudent } = useSelectedStudent();
 
   const handleGeneratePDF = () => {
-    const url = `http://localhost:8000/reports/academic/?alumno_id=${selectedStudent?.uuid}&fecha_inicio=${startDate}&fecha_fin=${endDate}&output=pdf`;
+    const url = `http://localhost:8000/reports/academic/?student_id=${selectedStudent?.uuid}&start_date=${startDate}&end_date=${endDate}&output=pdf`;
     window.open(url, "_blank");
     setFormReport(false);
   };

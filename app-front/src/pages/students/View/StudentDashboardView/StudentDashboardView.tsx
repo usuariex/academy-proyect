@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import styles from "./StudentDashboardView.module.css";
-import StudentTable from "../../components/StudentTable/StudentsTable";
-import StudentProfileCard from "../../components/StudentProfileCard/StudentProfileCard";
+import { StudentTable, StudentProfileCard } from "@students/components";
 import { useSelectedStudent } from "@students/hooks";
 
 export const StudentDashboardView: FC = () => {

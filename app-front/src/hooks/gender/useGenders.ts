@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { getGenders } from "@/services";
 import { genderResponseAdapter } from "@/adapters";
-import type { GenderSelectOption } from "@/models";
+import type { SelectOption } from "@/models";
 
 export const useGenders = () => {
-    const [options, setOptions] = useState<GenderSelectOption[]>([]);
+    const [options, setOptions] = useState<SelectOption[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 

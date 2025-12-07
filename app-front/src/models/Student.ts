@@ -4,7 +4,7 @@ import type { EvaluationResponse } from "./Evaluation";
 export interface Student {
   id: number;
   uuid: string;
-  code: number;
+  code: string;
   firstName: string;
   lastNameFather: string;
   lastNameMother: string;
@@ -30,10 +30,10 @@ export interface Student {
 export interface StudentResponse {
   id: number;
   uuid: string;
-  code: number;
+  code: string;
   firstName: string;
-  lastNameFather: string;
-  lastNameMother: string;
+  paternalSurname: string;
+  maternalSurname: string;
   fullName: string;
   birthDate: string;
   email?: string | null;
@@ -65,8 +65,8 @@ export interface SelectedStudentValue {
 
 export interface StudentRequest {
   firstName: string;
-  lastNameFather: string;
-  lastNameMother: string;
+  paternalSurname: string;
+  maternalSurname: string;
   birthDate: string;
   email: string;
   phone: string;
@@ -77,19 +77,6 @@ export interface StudentRequest {
   dni: string;
   isActive: boolean
 }
-
-
-
-
-
-/* export interface StudentEvaluation {
-  studentEvaluationId: number;
-  evaluationId: number;
-  studentId: number;
-  names: string;
-  fullName: string;
-  status: number | string; 
-} */
 
 
 
@@ -145,32 +132,43 @@ export interface Sexo {
 
 /* ============================================= */
 
-// src/models/student.ts
 
-/** Allowed statuses for a student's evaluation */
 
-export type StudentStatus = 'Sin calificar' | 'Calificado' | 'Aprobado' | 'Desaprobado' | string;
 
-export interface StudentEvaluation {
-
-  studentEvaluationId: number;
-  evaluationId: number;
-  evaluationName: string;
-  studentId: number;
-  names: string;
-  fullName: string;
-  status: StudentStatus;
+export interface StudentEvaluationResponse {
+  studentUuid: string;
+  studentFullName: string;
   grade: number | null;
   result: number | null;
-
-
-
-
-  /** Fields specific to physical evaluations */
-  reps?: number | null;
-  seconds?: number
-  /** Fields specific to theoretical evaluations */
-  attempts?: number | null;
   observations?: string | null;
+  exerciseName?: string | null;
+  theoryPerformedAt?: string | null;
+  theoryAttemptNumber?: number | null;
+  status?: string | null;
+  [key: string]: unknown;
+}
+
+export interface PaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: StudentEvaluationResponse[];
+}
+
+export interface StudentEvaluation {
+  studentUuid: string;
+  studentFullName: string;
+  grade: number | null;
+  result: number | null;
+  observations?: string | null;
+  exerciseName?: string | null;
+  theoryPerformedAt?: string | null;
+  theoryAttemptNumber?: number | null;
+  status?: string | null;
+}
+
+export interface StudentsServiceResult {
+  raw: PaginatedResponse;
+  items: StudentEvaluation[];
 }
 

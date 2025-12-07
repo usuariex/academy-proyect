@@ -1,6 +1,6 @@
 import { useState } from "react";
-import type { EvaluationTypes, EvaluationRequest } from "../../../models";
-import '../FormSteps.css';
+import type { EvaluationTypes, EvaluationRequest } from "@/models";
+import './FormSteps.css';
 
 interface Props {
   onCreate: (data: EvaluationRequest) => void;
@@ -9,9 +9,9 @@ interface Props {
 
 const StepEvaluationBase = ({ onCreate, evaluationTypes }: Props) => {
   const [localData, setLocalData] = useState<EvaluationRequest>({
-    description: null,
+    description: '',
     typeId: 0,
-    plannedDate: null,
+    plannedDate: '',
     statusId: 1,
   });
 
@@ -70,7 +70,7 @@ const StepEvaluationBase = ({ onCreate, evaluationTypes }: Props) => {
           <option value={3}>Finalizada</option>
         </select>
       </label>
-      
+
       <label>
         Descripción:
         <input

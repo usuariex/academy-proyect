@@ -1,29 +1,39 @@
 
-
-export interface EvaluationRequest {
-  plannedDate: string | null;
-  description: string | null;
-  typeId: number;
-  statusId: number ;
-}
-
-export interface EvaluationResponse {
-  id: number;
-  evalCode: string;
+export interface Evaluation {
+  code: string;
   name: string;
   typeId: number;
-  typeName: string; 
-  plannedDate: string;
+  typeName: string;
   description: string;
   statusId: number;
   statusName: string;
   createdAt: string;
+  plannedDate: string;
+}
+
+export interface EvaluationRequest {
+  plannedDate: string;
+  description: string;
+  typeId: number;
+  statusId: number;
+}
+
+export interface EvaluationResponse {
+  code: string;
+  name: string;
+  typeId: number;
+  typeName: string;
+  description: string;
+  statusId: number;
+  statusName: string;
+  createdAt: string;
+  plannedDate: string;
 }
 
 
 export interface EvaluationTypes {
   id: number;
-  name: string;           
+  name: string;
 }
 
 
@@ -35,31 +45,30 @@ export interface Grades {
 
 
 
+export type StatusGradeResponse = 'Sin calificar' | 'Aprobado' | 'Desaprobado' | string;
+export type StatusGrade = 'approved' | 'failed' | 'ungraded' | 'unknown';
+
+
+
+
+
+
+
+
+
+
 /* ============================================== */
 
 
-export interface EvaluationSummaryResponse {
+/* Añadir configuacion a evaluaciones teoricas */
+
+export interface EvaluationConfigRequest {
   evaluationId: number;
-  evaluationName: string;
-  evaluationType: string;
-  plannedDate: string;
-  statusName: string;
-  totalStudents: number;
-  approved: number;
-  failed: number;
-  ungraded: number;
-  averageGrade: number | null;
-  maxGrade: number | null;
-  minGrade: number | null;
-  medianGrade: number | null;
-  gradeDistribution: {
-    '0-10': number;
-    '11-15': number;
-    '16-20': number;
-  };
-  statusDistribution: {
-    approved: number;
-    failed: number;
-    ungraded: number;
-  };
+  configId: number;
+}
+
+export interface EvaluationConfigResponse {
+  id: number;
+  evaluationId: number;
+  configId: number;
 }

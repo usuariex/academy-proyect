@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./StudentFilters.module.css";
-import type { StudentStatus } from "../../../../models";
-import { SearchInput } from "../../../../components/Search/SearchInput";
+import type { StudentStatus } from "@/models";
+import { SearchInput } from "@/components/forms";
 
 interface StudentFiltersProps {
   onFilterChange?: (filters: { searchText: string; status?: StudentStatus; group: string }) => void;
