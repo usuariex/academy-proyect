@@ -1,0 +1,44 @@
+/* Estilos base para las celdas de la fila */
+.cell {
+    padding: 0.75rem;
+    color: #444;
+    vertical-align: middle;
+}
+
+/* Input de edición */
+.input {
+    width: 80px;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: #333;
+    background-color: #fff;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #2196f3;
+    /* azul semántico para foco */
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+}
+
+/* Contenedor de acciones (botones) */
+.actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Estado de guardado (deshabilitado) */
+.actions :global(button:disabled) {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Hover en la fila completa */
+.row:hover {
+    background-color: #fafafa;
+}

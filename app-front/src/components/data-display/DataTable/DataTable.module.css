@@ -1,0 +1,61 @@
+/* DataTable.module.css */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    background-color: #fff;
+    table-layout: fixed;
+}
+
+.table th,
+.table td {
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.table th {
+    font-weight: 600;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.table tr:hover {
+    background-color: #fafafa;
+}
+
+/* Variantes */
+.striped tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.bordered td,
+.bordered th {
+    border: 1px solid #ccc;
+}
+
+.compact td,
+.compact th {
+    padding: 0.4rem;
+    font-size: 0.85rem;
+}
+
+/* Proporciones de columnas */
+.colName {
+    width: 30%;
+}
+
+.colGrade {
+    width: 15%;
+}
+
+.colResult {
+    width: 25%;
+}
+
+.colActions {
+    width: 30%;
+}

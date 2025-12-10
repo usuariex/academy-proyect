@@ -1,0 +1,81 @@
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+    background-color: #f9f9f9;
+}
+
+.content_table {
+    width: 100%;
+    max-width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+h4 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.table thead {
+    background-color: #f0f0f0;
+}
+
+.table th,
+.table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.table th {
+    font-weight: 600;
+    color: #444;
+}
+
+.table td {
+    color: #555;
+}
+
+/* Column widths */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+    width: 30%;
+    /* Alumno */
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    width: 15%;
+    /* Nota */
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+    width: 25%;
+    /* Respuestas correctas */
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+    width: 30%;
+    /* Acciones */
+}
+
+/* Input styling */
+.input {
+    width: 80px;
+    padding: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

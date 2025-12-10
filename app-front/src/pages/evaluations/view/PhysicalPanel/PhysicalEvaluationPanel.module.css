@@ -1,0 +1,102 @@
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.tableWrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  font-size: 14px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.table thead {
+  background-color: #f5f5f5;
+}
+
+.table th,
+.table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+.table th {
+  font-weight: 600;
+  color: #444;
+}
+
+.table tbody tr:hover {
+  background-color: #668ba463;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Botones base */
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* Botón principal (azul) */
+.btnPrimary {
+  background-color: #1976d2;
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  background-color: #1565c0;
+}
+
+/* Botón de calificar (naranja) */
+.btnCalificar {
+  background-color: #ff9800;
+  color: #fff;
+}
+
+.btnCalificar:hover {
+  background-color: #f57c00;
+}
+
+/* Botón de editar (verde) */
+.btnEditar {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.btnEditar:hover {
+  background-color: #43a047;
+}
