@@ -1,4 +1,4 @@
-// src/modules/home/pages/HomePage.tsx
+
 import { Link } from "react-router-dom";
 import styles from "./HomePage.module.css";
 

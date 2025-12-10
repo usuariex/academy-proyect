@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import type { FC } from "react";
 import styles from "./StudentFilters.module.css";
-import type { StudentStatus } from "@/models";
+import type { StudentStatus } from "@/models/student";
 import { SearchInput } from "@/components/forms";
 
 interface StudentFiltersProps {
   onFilterChange?: (filters: { searchText: string; status?: StudentStatus; group: string }) => void;
 }
 
-export const StudentFilters: React.FC<StudentFiltersProps> = ({ onFilterChange }) => {
+export const StudentFilters: FC<StudentFiltersProps> = ({ onFilterChange }) => {
   const [searchText, setSearchText] = useState("");
   const [status, setStatus] = useState<StudentStatus | "">("");
   const [group, setGroup] = useState("");

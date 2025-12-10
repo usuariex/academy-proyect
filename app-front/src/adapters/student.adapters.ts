@@ -1,29 +1,5 @@
 
-import type { Student, StudentEvaluation, StudentEvaluationResponse, StudentResponse } from '@/models';
-
-/* export const mapStudentsList = (data: any[]): StudentEvaluation[] =>
-  data.map((item) => ({
-    studentEvaluationId: item.studentEvaluationId,
-    evaluationId: item.evaluationId,
-    evaluationName: item.evaluationName,
-    studentId: item.studentId,
-    names: item.names,
-    fullName: item.fullName,
-    status: item.status as StudentGradeStatus,
-    grade: item.grade ?? null,
-    result: item.result ?? null,
-
-    // campos opcionales según tipo de evaluación
-    reps: item.reps ?? null,
-    seconds: item.seconds ?? null,
-    attempts: item.attempts ?? null,
-    observations: item.observations ?? null,
-  }));
- */
-
-
-
-
+import type { PaginatedResponse, StudentsServiceResult, Student, StudentEvaluation, StudentEvaluationResponse, StudentResponse } from '@/models/student';
 
 
 /* CHECKED */
@@ -56,24 +32,35 @@ export function StudentResponseAdapter(data: StudentResponse): Student {
 
 
 
-
-export const mapRaw = (raw: StudentEvaluationResponse): StudentEvaluationResponse => {
-  return raw;
-};
+export const mapRaw = (raw: StudentEvaluationResponse): StudentEvaluationResponse => raw;
 
 export const mapStudent = (raw: StudentEvaluationResponse): StudentEvaluation => {
+  const exercise = raw.assigned_exercise ?? null;
+  const config = raw.assigned_config ?? null;
+
   return {
-    studentUuid: typeof raw.studentUuid === 'string' ? raw.studentUuid : '',
-    studentFullName: typeof raw.studentFullName === 'string' ? raw.studentFullName : '',
+    studentEvaluationId: raw.studentEvaluationId,
+    studentUuid: typeof raw.studentUuid === "string" ? raw.studentUuid : "",
+    studentFullName: typeof raw.studentFullName === "string" ? raw.studentFullName : "",
     grade: raw.grade ?? null,
     result: raw.result ?? null,
+    performedAt: raw.performedAt ?? null,
     observations: raw.observations ?? null,
-    exerciseName: raw.exerciseName ?? null,
-    theoryPerformedAt: raw.theoryPerformedAt ?? null,
-    theoryAttemptNumber: raw.theoryAttemptNumber ?? null,
     status: raw.status ?? null,
+
+    exerciseId: exercise && typeof exercise.id === "number" ? exercise.id : null,
+    exerciseName: exercise && typeof exercise.name === "string" ? exercise.name : null,
+
+    configId: config && typeof config.id === "number" ? config.id : null,
+    configName: config && typeof config.name === "string" ? config.name : null,
   };
 };
 
 export const StudentsEvaluationAdapter = (data: StudentEvaluationResponse[] = []): StudentEvaluation[] =>
   data.map(mapStudent);
+
+
+export const adaptPaginated = (raw: PaginatedResponse): StudentsServiceResult => ({
+  raw,
+  items: (raw.results ?? []).map(mapStudent),
+});

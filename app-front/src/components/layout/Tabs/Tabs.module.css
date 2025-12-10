@@ -7,18 +7,20 @@
 
 .item {
   cursor: pointer;
-  color: #374151;
+  color: #2869d2;
   padding: 0.5rem 0.75rem;
+  font-weight: 600;
   border-radius: 6px;
   transition: background 0.15s ease;
 }
 
 .item:hover {
   background: #f3f4f6;
+  color: #1e4e9b;
 }
 
 .active {
   font-weight: 600;
-  color: #111827;
-  background: #e5e7eb;
+  color: #ffffff;
+  background: #23499a;
 }

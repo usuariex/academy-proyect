@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { SelectedStudentContext } from '@/contexts'
-import type { SelectedStudentValue } from "@/models";
+import type { SelectedStudentValue } from "@/models/student";
 
 
 export const useSelectedStudent = (): SelectedStudentValue => {

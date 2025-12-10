@@ -62,17 +62,20 @@ export const Modal = ({
         className={`${styles.container} ${width ? styles[width] : ''} ${className ?? ''}`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className={styles.header}>
-          {title && <h3 className={styles.title}>{title}</h3>}
-          <button
-            type="button"
-            className={styles.close}
-            aria-label="Cerrar"
-            onClick={onClose}
-          >
-            ✖
-          </button>
-        </div>
+        {title && (
+          <div className={styles.header}>
+            {title && <h3 className={styles.title}>{title}</h3>}
+          </div>
+        )}
+
+        <button
+          type="button"
+          className={styles.close}
+          aria-label="Cerrar"
+          onClick={onClose}
+        >
+          ✖
+        </button>
 
         <div className={`${styles.content} ${contentClassName ?? ''}`}>
           {children}

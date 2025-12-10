@@ -1,8 +1,9 @@
 import { EntitySection } from "@/components/data-display";
 import { useSectionEditing } from "@/hooks/students";
 import { patchStudentProfileAdapter } from "@/adapters";
-import { patchStudentProfile } from "@/services";
-import type { StudentProfileResponse, SectionSchema } from "@/models";
+import { patchStudentProfile } from "@/services/student";
+import type { SectionSchema } from "@/models/";
+import type { StudentProfileResponse } from "@/models/student";
 
 
 interface Props {

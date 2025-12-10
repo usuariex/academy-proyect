@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { login as loginService, logout as logoutService, getCurrentUser } from '../services/auth';
+import { login as loginService, logout as logoutService, getCurrentUser } from '../services/auth/auth';
 
 interface User {
   id: number;

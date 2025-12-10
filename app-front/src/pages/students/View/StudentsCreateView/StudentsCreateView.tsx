@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styles from "./StudentsCreateView.module.css";
 import { useCreateStudent } from "@students/hooks";
-import type { StudentRequest } from "@/models";
+import type { StudentRequest } from "@/models/student";
 import { SelectField } from "@/components/forms";
 import { useGenders } from "@/hooks/gender";
 

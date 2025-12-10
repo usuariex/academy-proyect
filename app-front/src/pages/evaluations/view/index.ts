@@ -1,4 +1,6 @@
 export * from './EvaluationListView/EvaluationListView'
 export * from './EvaluationPanelView/EvaluationPanelView'
-export * from './EvaluationCreateView/EvaluationWizard'
+export * from './EvaluationCreateView/EvaluationForm'
 export * from './EvaluationsLayout'
+export * from './TheoreticalPanel/TheoreticalEvaluationPanel'
+export * from './PhysicalPanel/PhysicalEvaluationPanel'

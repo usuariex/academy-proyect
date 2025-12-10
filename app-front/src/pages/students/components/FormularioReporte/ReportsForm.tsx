@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./ReportsForm.module.css";
 
 export interface DateFormProps {
@@ -9,13 +8,13 @@ export interface DateFormProps {
   onGenerate: () => void;
 }
 
-export const ReportsForm: React.FC<DateFormProps> = ({
+export const ReportsForm = ({
   startDate,
   endDate,
   onStartDateChange,
   onEndDateChange,
   onGenerate,
-}) => {
+}: DateFormProps) => {
   return (
     <div className={styles.container}>
       <div className={styles.Dates}>
@@ -39,8 +38,6 @@ export const ReportsForm: React.FC<DateFormProps> = ({
           />
         </div>
       </div>
-
-
 
       <button onClick={onGenerate} className={styles.button}>
         Generar PDF

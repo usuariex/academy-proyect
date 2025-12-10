@@ -2,7 +2,7 @@ import { useState } from "react";
 import styles from "./StudentsTable.module.css";
 import StudentFilters from "../StudentFilters/StudentFilters";
 import { useDeleteStudent, useSelectedStudent, useStudents } from "@students/hooks";
-import type { Student, StudentStatus } from "@/models";
+import type { Student, StudentStatus } from "@/models/student";
 import { useDeactivateStudent } from "@students/hooks";
 
 type Filters = {

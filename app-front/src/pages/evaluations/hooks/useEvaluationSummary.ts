@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getEvaluationSummary } from '@/services';
+import { getEvaluationSummary } from '@/services/evaluation';
 import type { EvaluationSummaryResponse } from '@evaluations/models';
 
 export const useEvaluationSummary = (evaluationId: string, enabled = true) => {

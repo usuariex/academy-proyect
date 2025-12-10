@@ -3,7 +3,7 @@ import { LayoutGlobal } from '@/components/layout';
 import {
   EvaluationListView,
   EvaluationsLayout,
-  EvaluationWizard
+  EvaluationForm
 } from '@evaluations/view';
 import {
   StudentDashboardView,
@@ -24,7 +24,7 @@ function App() {
 
           <Route path="evaluations" element={<EvaluationsLayout />}>
             <Route index element={<EvaluationListView />} />
-            <Route path="create" element={<EvaluationWizard />} />
+            <Route path="create" element={<EvaluationForm />} />
           </Route>
 
 

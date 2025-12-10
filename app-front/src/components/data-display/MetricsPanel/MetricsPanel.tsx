@@ -11,10 +11,6 @@ interface Props {
 export const MetricsPanel: React.FC<Props> = ({ metrics, compact = false, className }) => {
   const {
     code,
-    evaluationName,
-    evaluationType,
-    plannedDate,
-    statusName,
     totalStudents,
     approved,
     failed,
@@ -32,20 +28,7 @@ export const MetricsPanel: React.FC<Props> = ({ metrics, compact = false, classN
       className={`${styles.panel} ${compact ? styles.compact : ''} ${className ?? ''}`}
       aria-labelledby={`metrics-${code}`}
     >
-      <header className={styles.header}>
-        <h4 id={`metrics-${code}`} className={styles.title}>
-          {evaluationName}
-        </h4>
-        <div className={styles.meta}>
-          <span className={styles.type}>{evaluationType}</span>
-          {plannedDate && (
-            <time className={styles.date} dateTime={plannedDate}>
-              {plannedDate}
-            </time>
-          )}
-          <span className={styles.status}>{statusName}</span>
-        </div>
-      </header>
+
 
       <div className={styles.counters} role="list">
         <div className={styles.counter} role="listitem">

@@ -1,4 +1,4 @@
-import type { StatusGradeResponse, StatusGrade } from "@/models";
+import type { StatusGradeResponse, StatusGrade } from "@/models/evaluation";
 
 export const classifyGradeStatus = (status: StatusGradeResponse): StatusGrade => {
     if (!status) return 'unknown';

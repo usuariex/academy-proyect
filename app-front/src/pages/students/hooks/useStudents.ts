@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
-import type { Student } from "@/models";
-import { getStudents } from '@/services';
+import type { Student } from "@/models/student";
+import { getStudents } from '@/services/student';
 import { StudentResponseAdapter } from '@/adapters'
 
 

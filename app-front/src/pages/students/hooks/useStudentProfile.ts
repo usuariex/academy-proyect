@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
-import type { StudentProfileResponse } from "@/models";
-import { getStudentProfile } from '@/services';
+import type { StudentProfileResponse } from "@/models/student";
+import { getStudentProfile } from '@/services/student';
 
 
 export const useStudentProfile = (uuid: string) => {

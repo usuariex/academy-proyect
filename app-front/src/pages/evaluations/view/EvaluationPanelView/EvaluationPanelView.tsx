@@ -1,19 +1,20 @@
-// src/components/evaluations/EvaluationModal/EvaluationModal.tsx
+
 import { useState, useMemo } from 'react';
 import type { FC } from 'react';
 import { Modal } from '@/components/modals';
 import { MetricsPanel } from '@/components/data-display';
 import { Tabs } from '@/components/layout';
 import { useStudentsByEvaluation } from '@/hooks/students';
-import TheoreticalEvaluationPanel from '../../components/TheoreticalPanel/TheoreticalEvaluationPanel';
-import PhysicalEvaluationPanel from '../../components/PhysicalPanel/PhysicalEvaluationPanel';
-import { useEvaluationSummary } from '@/pages/evaluations/hooks/useEvaluationSummary';
-import type { Evaluation, SelectOption, StatusGrade, StudentEvaluation } from '@/models';
-import StudentsTable from '../../components/StudentsTable/StudentsTable'
-import { classifyGradeStatus } from '@/utilities';
+import type { StudentEvaluation } from '@/models/student';
+import type { Evaluation, StatusGrade, } from '@/models/evaluation';
+import type { SelectOption } from '@/models/ui';
+import { classifyGradeStatus } from '@/utilities/evaluation';
 import { SearchInput, SelectField } from '@/components/forms';
 import styles from './EvaluationPanelView.module.css';
+import { useEvaluationSummary } from '@evaluations/hooks';
 
+import { PhysicalEvaluationPanel, TheoreticalEvaluationPanel } from '@evaluations/view';
+import { StudentsByEvaluationTable } from '@evaluations/components';
 
 
 type TabKey = 'grades' | 'evaluate' | 'others';
@@ -35,6 +36,8 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
   // Data hooks
   const { data, isLoading: studentsLoading, error: studentsError/* , refetch  */ } = useStudentsByEvaluation(evaluation.code, 1, 20);
   const students = data?.items ?? [];
+
+
 
   // Filtrado memoizado
   const filteredStudents = useMemo(() => {
@@ -91,7 +94,22 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={evaluation.name} width="normal">
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <header className={styles.header}>
+        <h4 className={styles.title}>
+          {evaluation.name}
+        </h4>
+        <div className={styles.meta}>
+          <span className={styles.type}>{evaluation.name}</span>
+          {evaluation.plannedDate && (
+            <time className={styles.date} dateTime={evaluation.plannedDate}>
+              {evaluation.plannedDate}
+            </time>
+          )}
+          <span className={styles.status}>{evaluation.statusName}</span>
+        </div>
+      </header>
+
       <div className={styles.container}>
         <Tabs
           items={[
@@ -102,6 +120,19 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
           activeKey={activeTab}
           onChange={(k) => setActiveTab(k as TabKey)}
         />
+
+        {activeTab === 'grades' && (
+          <>
+            {metricsLoading && <div>Cargando métricas...</div>}
+            {metricsError && (
+              <div style={{ color: 'red' }}>Error al cargar métricas: {metricsError.message}</div>)}
+
+
+            {metrics &&
+              <MetricsPanel
+                metrics={metrics} />}
+          </>
+        )}
 
 
         {activeTab === 'grades' && (
@@ -135,27 +166,17 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
           </div>
         )}
 
-
         {activeTab === 'grades' && (
           <>
-            {metricsLoading && <div>Cargando métricas...</div>}
-            {metricsError && (
-              <div style={{ color: 'red' }}>Error al cargar métricas: {metricsError.message}</div>)}
-
-
-            {metrics &&
-              <MetricsPanel
-                metrics={metrics} />}
-
-
-
-
             {studentsLoading && <div>Cargando alumnos...</div>}
             {studentsError && (
               <div style={{ color: 'red' }}>Error al cargar alumnos: {studentsError.message}</div>
             )}
+
+
+
             {!studentsLoading && !studentsError && (
-              <StudentsTable students={filteredStudents ?? []} onOpenEdit={handleOpenEdit} />
+              <StudentsByEvaluationTable students={filteredStudents ?? []} onOpenEdit={handleOpenEdit} />
             )}
           </>
         )}
@@ -174,8 +195,7 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
             {evaluation.typeName === 'Teorica' && metrics && (
               <TheoreticalEvaluationPanel
                 students={students}
-                evaluationCode={evaluation.code}
-                onOpenEdit={handleOpenEdit}
+              /*  evaluationCode={evaluation.code} */
               />
             )}
           </>

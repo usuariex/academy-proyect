@@ -1,9 +1,12 @@
 import rest_framework.serializers as serializers
+from .services.calculate_grade import calculate_theory_grade
 from academy.settings import UMBRAL_APROBACION
 from datetime import date
-from .models import EvaluationStatus, EvaluationType, EvaluationStatus, SequenceEvaluation, EvaluationType, Exercise, TheoryConfig, Evaluation, EvaluationStudent, TheoryEvaluation, PhysicalEvaluation, TheoryEvaluationConfig
+from .models import EvaluationStatus, EvaluationType, EvaluationStatus, EvaluationType, Exercise, TheoryConfig, Evaluation, EvaluationStudent, TheoryEvaluation, PhysicalEvaluation, TheoryEvaluationConfig
 import django.conf as settings
 from django.db import transaction
+
+from .services.evaluations_service import create_evaluation_with_assignment, EvaluationAssignmentError
 
 
 class EvaluationStatusSerializer(serializers.ModelSerializer):
@@ -62,56 +65,73 @@ class EvaluationSerializer(serializers.ModelSerializer):
 
     createdAt = serializers.DateTimeField(source='created_at', read_only=True)
 
+    # --- write-only inputs from the front-end ---
+    exerciseId = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=Exercise.objects.all(), required=False, source='exercise_obj'
+    )
+    configId = serializers.PrimaryKeyRelatedField(
+        write_only=True, queryset=TheoryConfig.objects.all(), required=False, source='config_obj'
+    )
+
+    # --- read-only outputs (from related tables) ---
+    exerciseId_read = serializers.SerializerMethodField()
+    exerciseName = serializers.SerializerMethodField()
+    configId_read = serializers.SerializerMethodField()
+    configName = serializers.SerializerMethodField()
+
     class Meta:
         model = Evaluation
         fields = [
             'code', 'name', 'description',
             'typeId', 'typeName', 'statusId', 'statusName',
-            'createdAt', 'plannedDate'
+            'createdAt', 'plannedDate',
+            # write-only inputs
+            'exerciseId', 'configId',
+            # read-only outputs
+            'exerciseId_read', 'exerciseName', 'configId_read', 'configName',
         ]
 
-    @transaction.atomic
+    # ---------- read helpers ----------
+    def get_exerciseId_read(self, obj):
+        ee = getattr(obj, 'evaluation_exercises', None)
+        ee = ee.first() if ee else None
+        return ee.exercise_id if ee else None
+
+    def get_exerciseName(self, obj):
+        ee = getattr(obj, 'evaluation_exercises', None)
+        ee = ee.select_related('exercise').first() if ee else None
+        return ee.exercise.exercise_name if ee and ee.exercise else None
+
+    def get_configId_read(self, obj):
+        tc_qs = getattr(obj, 'theoryevaluationconfig_set', None)
+        tc = tc_qs.first() if tc_qs else None
+        return tc.config_id if tc else None
+
+    def get_configName(self, obj):
+        tc_qs = getattr(obj, 'theoryevaluationconfig_set', None)
+        tc = tc_qs.select_related('config').first() if tc_qs else None
+        return tc.config.config_name if tc and tc.config else None
+
+    # ---------- create ----------
     def create(self, validated_data):
-        evaluation_type = validated_data["type"]
-        today = date.today()
-        date_str = today.strftime("%Y-%m%d")  # e.g. 2025-1206
+        # extraer objetos temporales validados por PrimaryKeyRelatedField (source)
+        exercise_obj = validated_data.pop('exercise_obj', None)
+        config_obj = validated_data.pop('config_obj', None)
 
-        # --- Suffix by type ---
-        type_name_str = evaluation_type.type_name.strip().lower()
-        if "fisica" in type_name_str:
-            suffix = "EFI"
-        elif "teorica" in type_name_str:
-            suffix = "ETE"
-        else:
-            suffix = "GEN"
+        exercise_id = exercise_obj.pk if exercise_obj is not None else None
+        config_id = config_obj.pk if config_obj is not None else None
 
-        # --- Independent counter for NAME ---
-        last_by_type = Evaluation.objects.filter(
-            type=evaluation_type
-        ).order_by("-id").first()
-
-        if last_by_type and "-" in last_by_type.name:
-            try:
-                last_type_number = int(last_by_type.name.split("-")[-1])
-            except ValueError:
-                last_type_number = 0
-        else:
-            last_type_number = 0
-
-        new_type_number = last_type_number + 1
-        name = f"{date_str}-{suffix}-{new_type_number:02d}"
-
-        # --- Global counter for CODE ---
-        new_global_number = SequenceEvaluation.next_number()
-        code = f"{date_str}-{suffix}-{new_global_number:06d}"
-
-        # --- Create record ---
-        evaluation = Evaluation.objects.create(
-            name=name,
-            code=code,
-            **validated_data
-        )
-        return evaluation
+        try:
+            evaluation = create_evaluation_with_assignment(
+                validated_data,
+                exercise_id=exercise_id,
+                config_id=config_id,
+                user=self.context.get('request').user if self.context.get(
+                    'request') else None
+            )
+            return evaluation
+        except EvaluationAssignmentError as e:
+            raise serializers.ValidationError({"non_field_errors": [str(e)]})
 
 
 class TheoryEvaluationConfigSerializer(serializers.ModelSerializer):
@@ -132,6 +152,8 @@ class EvaluationStudentSerializer(serializers.ModelSerializer):
         read_only=True, source='student_uuid', allow_null=True)
     studentFullName = serializers.CharField(
         read_only=True, source='student_full_name', allow_null=True)
+    performedAt = serializers.DateField(
+        source='performed_at_unified', read_only=True)
 
     grade = serializers.FloatField(
         read_only=True, source='annotated_grade', allow_null=True)
@@ -139,12 +161,9 @@ class EvaluationStudentSerializer(serializers.ModelSerializer):
         read_only=True, source='annotated_result', allow_null=True)
     observations = serializers.CharField(
         read_only=True, source='annotated_observations', allow_null=True)
-    exerciseName = serializers.CharField(read_only=True, allow_null=True)
-    theoryPerformedAt = serializers.DateField(
-        read_only=True, source='annotated_theory_performed_at', allow_null=True)
-    theoryAttemptNumber = serializers.IntegerField(
-        read_only=True, source='annotated_theory_attempt_number', allow_null=True)
     status = serializers.SerializerMethodField()
+    assigned_exercise = serializers.SerializerMethodField()
+    assigned_config = serializers.SerializerMethodField()
 
     class Meta:
         model = EvaluationStudent
@@ -155,10 +174,11 @@ class EvaluationStudentSerializer(serializers.ModelSerializer):
             'grade',
             'result',
             'observations',
-            'exerciseName',
-            'theoryPerformedAt',
-            'theoryAttemptNumber',
+            'performedAt',
             'status',
+            'assigned_exercise',
+            'assigned_config'
+
         ]
 
     def get_status(self, obj):
@@ -171,16 +191,41 @@ class EvaluationStudentSerializer(serializers.ModelSerializer):
         except Exception:
             return "Sin calificar"
 
+    def get_assigned_exercise(self, obj):
+        # devolver solo si la evaluación es física
+        if getattr(obj, "evaluation", None) and getattr(obj.evaluation, "type", None):
+            if obj.evaluation.type.type_name == "Fisica":
+                return {
+                    "id": getattr(obj, "assigned_exercise_id", None),
+                    "name": getattr(obj, "assigned_exercise_name", None),
+                }
+        return None
+
+    def get_assigned_config(self, obj):
+        # devolver solo si la evaluación es teórica
+        if getattr(obj, "evaluation", None) and getattr(obj.evaluation, "type", None):
+            if obj.evaluation.type.type_name != "Fisica":
+                return {
+                    "id": getattr(obj, "assigned_config_id", None),
+                    "name": getattr(obj, "assigned_config_name", None),
+                }
+        return None
+
 
 class TheoryEvaluationSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     studentEvaluationId = serializers.IntegerField(
         required=True,
-        source='evaluation_student_id',)
+        source='evaluation_student_id',
+    )
     evaluationId = serializers.IntegerField(
-        source='evaluation_student.evaluation_id', read_only=True)
-    attemptNumber = serializers.IntegerField(source='attempt_number')
-    performedAt = serializers.DateField(source='performed_at')
+        source='evaluation_student.evaluation_id',
+        read_only=True
+    )
+    performedAt = serializers.DateField(
+        required=False,
+        source='performed_at'
+    )
     grade = serializers.DecimalField(
         required=False,
         allow_null=True,
@@ -203,21 +248,34 @@ class TheoryEvaluationSerializer(serializers.ModelSerializer):
             'id',
             'studentEvaluationId',
             'evaluationId',
-            'attemptNumber',
             'performedAt',
             'grade',
             'result',
             'observations',
         ]
 
+    def create(self, validated_data):
+        result = validated_data.get("result")
+        config_id = self.context.get("config_id")
+        if config_id and result is not None:
+            grade = calculate_theory_grade(result, config_id)
+            validated_data["grade"] = grade
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        result = validated_data.get("result", instance.result)
+        config_id = self.context.get("config_id")
+        if config_id and result is not None:
+            grade = calculate_theory_grade(result, config_id)
+            validated_data["grade"] = grade
+        return super().update(instance, validated_data)
+
 
 class PhysicalEvaluationSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     studentEvaluationId = serializers.IntegerField(
         source='evaluation_student.id', read_only=True)
-    exerciseId = serializers.IntegerField(source='exercise.id', read_only=True)
-    exerciseName = serializers.CharField(
-        source='exercise.exercise_name', read_only=True)
+    performedAt = serializers.DateField(source='performed_at')
     exerciseUnit = serializers.CharField(
         source='exercise.unit', read_only=True)
     grade = serializers.DecimalField(
@@ -232,10 +290,9 @@ class PhysicalEvaluationSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'studentEvaluationId',
-            'exerciseId',
-            'exerciseName',
             'exerciseUnit',
             'grade',
-            'observations',
             'result',
+            'performedAt'
+            'observations',
         ]

@@ -1,6 +1,6 @@
-// src/auth/hooks/useLogin.ts
+/* // src/auth/hooks/useLogin.ts
 import { useState } from "react";
-import { login } from "@/services";
+import { login } from "@/services/student";
 
 export const useLogin = () => {
     const [loading, setLoading] = useState(false);
@@ -24,3 +24,4 @@ export const useLogin = () => {
 
     return { handleLogin, loading, error };
 };
+ */

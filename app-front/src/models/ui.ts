@@ -36,3 +36,9 @@ export interface SectionSchema {
 }
 
 
+/* Tabla generica */
+export interface Column<T> {
+    key: keyof T | "actions";
+    label: string;
+    render?: (value: any, row: T) => ReactNode;
+}

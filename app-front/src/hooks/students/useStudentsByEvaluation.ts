@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import type { UseQueryOptions } from '@tanstack/react-query';
-import { getStudentsByEvaluation } from '@/services';
-import type { StudentsServiceResult } from '@/models';
+import { getStudentsByEvaluation } from '@/services/student';
+import type { StudentsServiceResult } from '@/models/student';
 
 export const useStudentsByEvaluation = (
   code: string | null,

@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from "react";
-import { getByPath, buildChangedPatch } from "@/utilities";
+import { getByPath, buildChangedPatch } from "@/utilities/evaluation";
 import type { SectionSchema } from "@/models";
 
 export function useSectionEditing<T extends object>(schema: SectionSchema, data: T) {

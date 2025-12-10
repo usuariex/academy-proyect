@@ -1,4 +1,4 @@
-import type { StudentProfileResponse } from "@/models";
+import type { StudentProfileResponse } from "@/models/student";
 import { StudentSection } from "@students/components";
 import { contactSchema, personalSchema, evaluationSchema, addressSchema } from "@students/schemas";
 import styles from "./StudentProfilePanel.module.css";

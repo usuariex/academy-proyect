@@ -54,3 +54,21 @@ export interface EvaluationSummary {
 
 
 
+export interface TheoryConfigResponse {
+    config_id: number;
+    name: string;
+    config_name: string;
+    total_questions: number;
+    notes: string;
+    created_at: string;
+    is_active: boolean;
+}
+
+export interface TheoryConfig {
+    id: number;
+    name: string;
+    totalQuestions: number;
+    notes: string;
+    createdAt: Date;
+    isActive: boolean;
+}

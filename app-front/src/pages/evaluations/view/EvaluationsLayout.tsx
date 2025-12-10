@@ -1,4 +1,4 @@
-// EvaluationsLayout.tsx
+
 import { ModuleLayout } from "@/components/layout";
 
 export const EvaluationsLayout = () => (

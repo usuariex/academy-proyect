@@ -24,6 +24,9 @@ router.register(r'config', TheoryEvaluationConfigViewSet,
 
 router.register(r'theory-config', TheoryConfigViewSet,
                 basename='theory-config')
+
+
+# PATCH http://127.0.0.1:8000/api/evaluations/theory/update-by-student/
 router.register(r'theory', TheoryEvaluationViewSet,
                 basename='theory-evaluation')
 router.register(r'physical', PhysicalEvaluationViewSet,
@@ -35,9 +38,10 @@ router.register(r'physical', PhysicalEvaluationViewSet,
 # GET /api/evaluations/<id>/summary/
 router.register(r'base', EvaluationViewSet, basename='evaluation')
 
+router.register(r'exercises', ExerciseViewSet, basename='exercise')
+
 router.register(r'', EvaluationStudentViewSet,
                 basename='evaluation-student')
-router.register(r'exercises', ExerciseViewSet, basename='exercise')
 
 
 urlpatterns = router.urls

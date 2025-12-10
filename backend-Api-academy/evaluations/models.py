@@ -119,12 +119,12 @@ class TheoryEvaluationConfig(models.Model):
 
 class PhysicalEvaluation(models.Model):
     physical_eval_id = models.AutoField(primary_key=True, db_column="id")
-    exercise = models.ForeignKey(
-        Exercise, on_delete=models.PROTECT, db_index=True, db_column="ejercicio_id")
     evaluation_student = models.ForeignKey(
         'EvaluationStudent', on_delete=models.CASCADE, db_index=True, db_column="evaluacion_alumno_id")
     grade = models.DecimalField(
         max_digits=5, decimal_places=2, blank=True, null=True, db_column="calificacion")
+    performed_at = models.DateField(
+        blank=True, null=True, db_column="fecha_realizacion")
     observations = models.TextField(
         blank=True, null=True, db_column="observaciones")
     result = models.DecimalField(
@@ -134,7 +134,7 @@ class PhysicalEvaluation(models.Model):
         managed = False
         db_table = 'evaluacion_fisica'
         constraints = [
-            models.UniqueConstraint(fields=['exercise', 'evaluation_student'],
+            models.UniqueConstraint(fields=['evaluation_student'],
                                     name='e_alum_ejercicio_uq')
         ]
 
@@ -143,7 +143,6 @@ class TheoryEvaluation(models.Model):
     theory_eval_id = models.AutoField(primary_key=True, db_column="id")
     evaluation_student = models.ForeignKey(
         'EvaluationStudent', on_delete=models.CASCADE, db_index=True, db_column="evaluacion_alumno_id")
-    attempt_number = models.IntegerField(db_column="intento_num")
     performed_at = models.DateField(
         blank=True, null=True, db_column="fecha_realizacion")
     grade = models.DecimalField(
@@ -157,7 +156,7 @@ class TheoryEvaluation(models.Model):
         db_table = 'evaluacion_teorica'
         constraints = [
             models.UniqueConstraint(
-                fields=['evaluation_student', 'attempt_number'], name='ealumno_inten_uq')
+                fields=['evaluation_student'], name='ealumno_inten_uq')
         ]
         indexes = [
             models.Index(fields=['evaluation_student',
@@ -258,3 +257,24 @@ class SequenceEvaluation(models.Model):
             secuencia.last_number += 1
             secuencia.save(update_fields=["last_number"])
             return secuencia.last_number
+
+
+class EvaluationExercise(models.Model):
+    evaluation = models.ForeignKey(
+        Evaluation,
+        on_delete=models.CASCADE,
+        db_column="evaluacion_id",
+        related_name="evaluation_exercises")
+    exercise = models.ForeignKey(
+        Exercise, on_delete=models.PROTECT,
+        db_column="ejercicio_id",
+        related_name="exercise_evaluations")
+
+    class Meta:
+        db_table = 'evaluacion_ejercicio'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['evaluation'], name='eval_uq')
+        ]
+        verbose_name = "Asignación Evaluación-Ejercicio"
+        verbose_name_plural = "Asignaciones Evaluación-Ejercicio"

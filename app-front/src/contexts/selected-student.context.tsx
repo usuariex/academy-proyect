@@ -1,6 +1,6 @@
 import { createContext, useState, useMemo } from "react";
 import type { FC, ReactNode } from "react";
-import type { Student, SelectedStudentValue } from "@/models";
+import type { Student, SelectedStudentValue } from "@/models/student";
 
 
 

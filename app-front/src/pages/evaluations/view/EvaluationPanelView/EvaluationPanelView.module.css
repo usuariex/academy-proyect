@@ -1,3 +1,48 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fafafa;
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.type {
+  font-weight: 500;
+  color: #444;
+}
+
+.date {
+  color: #888;
+  font-style: italic;
+}
+
+.status {
+  margin-left: auto;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  background-color: #e7fde3;
+  color: #06ba3c;
+}
+
+
 .container {
   display: flex;
   flex-direction: column;

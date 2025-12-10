@@ -1,5 +1,4 @@
-
-import type { EvaluationResponse, Evaluation } from '@/models/';
+import type { EvaluationTypeResponse, EvaluationType, EvaluationResponse, Evaluation } from "@/models/evaluation";
 import type { EvaluationSummary, EvaluationSummaryResponse } from '@evaluations/models/';
 
 
@@ -99,4 +98,8 @@ export const EvaluationAdapter = (data: EvaluationResponse) => {
 
 
 
+export const EvaluationTypeAdapter = (data: EvaluationTypeResponse): EvaluationType => ({
+  id: data.id,
+  name: data.name,
+});
 

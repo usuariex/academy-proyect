@@ -1,6 +1,6 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deactivateStudent } from "@/services";
+import { deactivateStudent } from "@/services/student";
 
 export const useDeactivateStudent = () => {
     const queryClient = useQueryClient();
