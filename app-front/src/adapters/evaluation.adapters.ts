@@ -91,7 +91,14 @@ export const EvaluationAdapter = (data: EvaluationResponse) => {
     description: data.description ?? "",
     statusId: data.statusId,
     statusName: data.statusName,
+    configId: data.configId,
+    configName: data.configName,
+    exerciseId: data.exerciseId,
+    exerciseName: data.exerciseName,
     createdAt: data.createdAt,
+    studentsCount: data.studentsCount,
+    hasGradedStudents: data.hasGradedStudents,
+    totalQuestions: data.totalQuestions
   };
   return formatedEvaluation
 }

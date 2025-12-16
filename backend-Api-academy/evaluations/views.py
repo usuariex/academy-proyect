@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+from .services.assign_students import assign_students, eligible_students
 from .services.evaluation_student_service import (
     subquery_latest_theory_grade,
     subquery_latest_theory_result,
@@ -8,40 +10,26 @@ from .services.evaluation_student_service import (
     subquery_physical_performed_at,
     subquery_physical_observations,
 )
+
 from django.db.models import (
-    OuterRef, Subquery, Value, CharField, IntegerField, F,
-    Case, When, FloatField, DateField, CharField as _CharField
+    Case, When, OuterRef, Subquery, Value, F,
+    CharField, IntegerField, FloatField, DateField, Count
 )
 from django.db.models.functions import Coalesce, Concat
+
 from .serializers import EvaluationStudentSerializer, EvaluationSerializer
 from .pagination import EvaluationStudentPagination
-from .serializers import EvaluationSerializer, EvaluationStudentSerializer
-from .models import Evaluation, EvaluationStudent, TheoryEvaluation, PhysicalEvaluation, EvaluationExercise
-from rest_framework.generics import get_object_or_404
-from django.db.models.functions import Concat
-from django.db.models import (DateField, F, Value, CharField, FloatField,
-                              Case, When
-                              )
-
-
-from django.db.models import F, Case, When, FloatField, CharField, Value
-from django.db.models.functions import Concat, Cast, Coalesce
-from django.shortcuts import get_object_or_404
-from django.db.models import F, Case, When
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from django.db.models import F, Case, When, FloatField, CharField
-
-
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from statistics import mean, median
-from rest_framework import viewsets, status
-from academy.settings import UMBRAL_APROBACION
-from .models import EvaluationStatus, TheoryEvaluation, EvaluationType, Exercise, TheoryConfig, Evaluation, EvaluationStudent, TheoryEvaluationConfig, PhysicalEvaluation
+from rest_framework import viewsets, permissions, status
+from rest_framework.decorators import action
+
+from rest_framework.response import Response
+from students.models import Student
+from students.serializers import StudentSerializer
+
+from .models import EvaluationStatus, TheoryEvaluation, EvaluationType, Exercise, TheoryConfig, EvaluationExercise, Evaluation, Evaluation, EvaluationStudent, TheoryEvaluationConfig, PhysicalEvaluation
+
 from .serializers import EvaluationStatusSerializer, TheoryEvaluationSerializer, EvaluationTypeSerializer, ExerciseSerializer, TheoryConfigSerializer, EvaluationStudentSerializer, TheoryEvaluationConfigSerializer, EvaluationSerializer, PhysicalEvaluationSerializer
-from rest_framework import permissions
 
 
 class EvaluationStatusViewSet(viewsets.ModelViewSet):
@@ -64,144 +52,6 @@ class TheoryConfigViewSet(viewsets.ModelViewSet):
     serializer_class = TheoryConfigSerializer
 
 
-class EvaluationStudentViewSet(viewsets.ReadOnlyModelViewSet):
-    # El queryset aquí es solo para que el router funcione; la acción students usa get_object_or_404(Evaluation, code=code)
-    queryset = Evaluation.objects.all()
-    permission_classes = [permissions.AllowAny]
-    lookup_field = "code"
-    serializer_class = EvaluationSerializer
-
-    @action(detail=True, methods=["get"], url_path="students")
-    def students(self, request, code=None):
-        evaluation = get_object_or_404(Evaluation, code=code)
-
-        qs = EvaluationStudent.objects.select_related(
-            "student", "evaluation", "evaluation__type"
-        ).filter(evaluation=evaluation)
-
-        # Subqueries (usando las funciones centralizadas)
-        theory_grade_subq = subquery_latest_theory_grade()
-        theory_result_subq = subquery_latest_theory_result()
-        theory_performed_at_subq = subquery_latest_theory_performed_at()
-        theory_observations_subq = subquery_latest_theory_observations()
-
-        physical_grade_subq = subquery_physical_grade()
-        physical_result_subq = subquery_physical_result()
-        physical_performed_at_subq = subquery_physical_performed_at()
-        physical_observations_subq = subquery_physical_observations()
-
-        from django.db.models import OuterRef, Subquery, Value, CharField, IntegerField, F
-
-        # EvaluationExercise: usar la FK materializada para el id y atravesar la FK para el nombre
-        exercise_id_subq = Subquery(
-            EvaluationExercise.objects
-            .filter(evaluation=OuterRef("evaluation"))
-            .values("exercise_id")[:1],
-            output_field=IntegerField()
-        )
-
-        exercise_name_subq = Subquery(
-            EvaluationExercise.objects
-            .filter(evaluation=OuterRef("evaluation"))
-            .values("exercise__exercise_name")[:1],
-            output_field=CharField()
-        )
-
-        # TheoryEvaluationConfig: id desde la tabla intermedia, nombre desde la FK a TheoryConfig
-        config_id_subq = Subquery(
-            TheoryEvaluationConfig.objects
-            .filter(evaluation=OuterRef("evaluation"))
-            .values("config_id")[:1],
-            output_field=IntegerField()
-        )
-
-        config_name_subq = Subquery(
-            TheoryEvaluationConfig.objects
-            .filter(evaluation=OuterRef("evaluation"))
-            .values("config__config_name")[:1],
-            output_field=CharField()
-        )
-
-        # Anotar el queryset con los campos de asignación
-        qs = qs.annotate(
-            assigned_exercise_id=exercise_id_subq,
-            assigned_exercise_name=exercise_name_subq,
-            assigned_config_id=config_id_subq,
-            assigned_config_name=config_name_subq,
-        )
-
-        # Subqueries / anotaciones de calificaciones y datos físicos
-        qs = qs.annotate(
-            theory_grade=theory_grade_subq,
-            theory_result=theory_result_subq,
-            theory_performed_at=theory_performed_at_subq,
-            theory_observations=theory_observations_subq,
-            physical_grade=physical_grade_subq,
-            physical_result=physical_result_subq,
-            physical_performed_at=physical_performed_at_subq,
-            physical_observations=physical_observations_subq,
-        )
-
-        # Anotar uuid y nombre completo (evitando NULLs con Coalesce)
-        qs = qs.annotate(
-            student_uuid=F("student__uuid"),
-            student_full_name=Concat(
-                Coalesce(F("student__first_name"), Value("")),
-                Value(" "),
-                Coalesce(F("student__paternal_surname"), Value("")),
-                Value(" "),
-                Coalesce(F("student__maternal_surname"), Value("")),
-                output_field=CharField(),
-            ),
-        )
-
-        # Unificar con output_field para evitar mixed types en Case
-        qs = qs.annotate(
-            annotated_grade=Case(
-                When(evaluation__type__type_name="Fisica",
-                     then=F("physical_grade")),
-                default=F("theory_grade"),
-                output_field=FloatField(),
-            ),
-            annotated_result=Case(
-                When(evaluation__type__type_name="Fisica",
-                     then=F("physical_result")),
-                default=F("theory_result"),
-                output_field=FloatField(),
-            ),
-            annotated_observations=Case(
-                When(evaluation__type__type_name="Fisica",
-                     then=F("physical_observations")),
-                default=F("theory_observations"),
-                output_field=CharField(),
-            ),
-            # mantener la fecha teórica y física por separado
-            annotated_theory_performed_at=F("theory_performed_at"),
-            annotated_physical_performed_at=F("physical_performed_at"),
-        )
-
-        # Anotación unificada performed_at según tipo de evaluación
-        qs = qs.annotate(
-            performed_at_unified=Case(
-                When(evaluation__type__type_name="Fisica",
-                     then=F("annotated_physical_performed_at")),
-                default=F("annotated_theory_performed_at"),
-                output_field=DateField(),
-            )
-        )
-
-        # Orden determinista para paginación
-        qs = qs.order_by("student_full_name")
-
-        paginator = EvaluationStudentPagination()
-        page = paginator.paginate_queryset(qs, request)
-        # pasar contexto al serializer por si lo necesita
-        serializer = EvaluationStudentSerializer(
-            page, many=True, context={'request': request}
-        )
-        return paginator.get_paginated_response(serializer.data)
-
-
 class TheoryEvaluationConfigViewSet(viewsets.ModelViewSet):
     queryset = TheoryEvaluationConfig.objects.all()
     serializer_class = TheoryEvaluationConfigSerializer
@@ -211,6 +61,11 @@ class EvaluationViewSet(viewsets.ModelViewSet):
     queryset = Evaluation.objects.select_related('type', 'status')
     serializer_class = EvaluationSerializer
     lookup_field = "code"
+
+    def get_queryset(self):
+        return Evaluation.objects.annotate(
+            students_count=Count('evaluationstudent')
+        )
 
     @action(detail=True, methods=['get'], url_path='summary')
     def summary(self, request, code=None):
@@ -270,6 +125,225 @@ class EvaluationViewSet(viewsets.ModelViewSet):
             "gradeDistribution": grade_distribution,
             "statusDistribution": status_distribution,
         })
+
+    @action(detail=True, methods=["get"], url_path="students")
+    def students(self, request, code=None):
+        evaluation = self.get_object()
+
+        # --- asignados ---
+        qs = EvaluationStudent.objects.select_related(
+            "student", "evaluation", "evaluation__type"
+        ).filter(evaluation=evaluation)
+
+        # Subqueries para teoría
+        theory_grade_subq = subquery_latest_theory_grade()
+        theory_result_subq = subquery_latest_theory_result()
+        theory_performed_at_subq = subquery_latest_theory_performed_at()
+        theory_observations_subq = subquery_latest_theory_observations()
+
+        # Subqueries para física
+        physical_grade_subq = subquery_physical_grade()
+        physical_result_subq = subquery_physical_result()
+        physical_performed_at_subq = subquery_physical_performed_at()
+        physical_observations_subq = subquery_physical_observations()
+
+        # Subqueries para ejercicio/config
+        exercise_id_subq = Subquery(
+            EvaluationExercise.objects
+            .filter(evaluation=OuterRef("evaluation"))
+            .values("exercise_id")[:1],
+            output_field=IntegerField()
+        )
+        exercise_name_subq = Subquery(
+            EvaluationExercise.objects
+            .filter(evaluation=OuterRef("evaluation"))
+            .values("exercise__exercise_name")[:1],
+            output_field=CharField()
+        )
+        config_id_subq = Subquery(
+            TheoryEvaluationConfig.objects
+            .filter(evaluation=OuterRef("evaluation"))
+            .values("config_id")[:1],
+            output_field=IntegerField()
+        )
+        config_name_subq = Subquery(
+            TheoryEvaluationConfig.objects
+            .filter(evaluation=OuterRef("evaluation"))
+            .values("config__config_name")[:1],
+            output_field=CharField()
+        )
+
+        qs = qs.annotate(
+            assigned_exercise_id=exercise_id_subq,
+            assigned_exercise_name=exercise_name_subq,
+            assigned_config_id=config_id_subq,
+            assigned_config_name=config_name_subq,
+            theory_grade=theory_grade_subq,
+            theory_result=theory_result_subq,
+            theory_performed_at=theory_performed_at_subq,
+            theory_observations=theory_observations_subq,
+            physical_grade=physical_grade_subq,
+            physical_result=physical_result_subq,
+            physical_performed_at=physical_performed_at_subq,
+            physical_observations=physical_observations_subq,
+            student_uuid=F("student__uuid"),
+            student_full_name=Concat(
+                Coalesce(F("student__first_name"), Value("")),
+                Value(" "),
+                Coalesce(F("student__paternal_surname"), Value("")),
+                Value(" "),
+                Coalesce(F("student__maternal_surname"), Value("")),
+                output_field=CharField(),
+            ),
+            annotated_grade=Case(
+                When(evaluation__type__type_name="Fisica",
+                     then=F("physical_grade")),
+                default=F("theory_grade"),
+                output_field=FloatField(),
+            ),
+            annotated_result=Case(
+                When(evaluation__type__type_name="Fisica",
+                     then=F("physical_result")),
+                default=F("theory_result"),
+                output_field=FloatField(),
+            ),
+            annotated_observations=Case(
+                When(evaluation__type__type_name="Fisica",
+                     then=F("physical_observations")),
+                default=F("theory_observations"),
+                output_field=CharField(),
+            ),
+            performed_at_unified=Case(
+                When(evaluation__type__type_name="Fisica",
+                     then=F("physical_performed_at")),
+                default=F("theory_performed_at"),
+                output_field=DateField(),
+            )
+        ).order_by("student_full_name")
+
+        # paginación de asignados
+        paginator_assigned = EvaluationStudentPagination()
+        page_assigned = paginator_assigned.paginate_queryset(qs, request)
+        assigned_serializer = EvaluationStudentSerializer(
+            page_assigned, many=True, context={'request': request}
+        )
+
+        # --- aptos pero no asignados ---
+        eligible_qs = eligible_students(evaluation).exclude(
+            uuid__in=qs.values_list("student__uuid", flat=True)
+        ).order_by("first_name")
+
+        # paginación de aptos
+        paginator_available = EvaluationStudentPagination()
+        page_available = paginator_available.paginate_queryset(
+            eligible_qs, request)
+        available_serializer = StudentSerializer(
+            page_available, many=True, context={'request': request}
+        )
+
+        return Response({
+            "assigned": assigned_serializer.data,
+            "available": available_serializer.data,
+            "pagination": {
+                "assigned": paginator_assigned.get_paginated_response({}).data,
+                "available": paginator_available.get_paginated_response({}).data,
+            }
+        }, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["post"], url_path="assign-students")
+    def assign_students(self, request, code=None):
+        evaluation = self.get_object()
+        student_uuids = request.data.get("students", [])
+
+        created, skipped = [], []
+
+        for uuid in student_uuids:
+            student = get_object_or_404(Student, uuid=uuid)
+
+            # Crear relación EvaluationStudent
+            eval_student, created_flag = EvaluationStudent.objects.get_or_create(
+                evaluation=evaluation,
+                student=student
+            )
+
+            if created_flag:
+                created.append(uuid)
+
+                # Según el tipo de evaluación, crear registro inicial
+                if evaluation.type.type_name == "Teorica":
+                    TheoryEvaluation.objects.get_or_create(
+                        evaluation_student=eval_student
+                    )
+                elif evaluation.type.type_name == "Fisica":
+                    PhysicalEvaluation.objects.get_or_create(
+                        evaluation_student=eval_student
+                    )
+            else:
+                skipped.append(uuid)
+
+        return Response({
+            "assigned": created,
+            "already_assigned": skipped,
+        }, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["post"], url_path="remove-students")
+    def remove_students(self, request, code=None):
+        evaluation = self.get_object()
+        student_uuids = request.data.get("students", [])
+
+        removed, not_found = [], []
+
+        for uuid in student_uuids:
+            try:
+                student = Student.objects.get(uuid=uuid)
+                eval_student = EvaluationStudent.objects.filter(
+                    evaluation=evaluation,
+                    student=student
+                ).first()
+
+                if eval_student:
+                    eval_student.delete()
+                    removed.append(uuid)
+                else:
+                    not_found.append(uuid)
+            except Student.DoesNotExist:
+                not_found.append(uuid)
+
+        return Response(
+            {
+                "removed": removed,
+                "not_found": not_found,
+            },
+            status=status.HTTP_200_OK
+        )
+
+    def perform_create(self, serializer):
+        evaluation = serializer.save()
+        if evaluation.status.status_name == "Programada":
+            assign_students(evaluation)
+
+    def perform_update(self, serializer):
+        evaluation_obj = self.get_object()
+        old_status = evaluation_obj.status.status_name
+        evaluation = serializer.save()
+        new_status = evaluation.status.status_name
+
+        if old_status != "Programada" and new_status == "Programada":
+
+            assign_students(evaluation)
+
+    def destroy(self, request, *args, **kwargs):
+        evaluation = self.get_object()
+        students_count = EvaluationStudent.objects.filter(
+            evaluation=evaluation).count()
+
+        if students_count > 0:
+            return Response(
+                {"detail": "No se puede eliminar: la evaluación tiene estudiantes asociados."},
+                status=status.HTTP_409_CONFLICT
+            )
+
+        return super().destroy(request, *args, **kwargs)
 
 
 class TheoryEvaluationViewSet(viewsets.ModelViewSet):

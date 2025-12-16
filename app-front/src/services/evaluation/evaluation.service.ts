@@ -1,3 +1,5 @@
+
+import { AssignStudentsAdapter, evaluationStatusAdapter } from "@/adapters/evaluation";
 import { api } from "@/services";
 import {
   EvaluationAdapter,
@@ -12,16 +14,22 @@ import type {
   EvaluationResponse,
   EvaluationRequest,
   EvaluationConfigRequest,
-  EvaluationConfigResponse
+  EvaluationConfigResponse,
 } from '@/models/evaluation';
 
 import type {
   EvaluationSummaryResponse,
+  evaluationStatusResponse,
+  evaluationStatus,
+  AssignStudentsRequest,
+  AssignStudents,
+  AssignStudentsResponse,
+  RemoveStudentsRequest
 } from '@evaluations/models';
 
 
 export const getEvaluations = async (): Promise<EvaluationResponse[]> => {
-  const res = await api.get('evaluations/base/');
+  const res = await api.get('evaluations/');
   const data = res.data.results ?? res.data;
   return data.map(EvaluationAdapter);
 };
@@ -31,14 +39,14 @@ export const getEvaluations = async (): Promise<EvaluationResponse[]> => {
 export const getEvaluationSummary = async (
   code: string
 ): Promise<EvaluationSummaryResponse> => {
-  const { data } = await api.get(`/evaluations/base/${code}/summary/`);
+  const { data } = await api.get(`/evaluations/${code}/summary/`);
   return EvaluationSummaryAdapter(data);
 };
 
 
 
 export const createEvaluation = async (data: EvaluationRequest): Promise<Evaluation> => {
-  const res = await api.post<EvaluationResponse>("evaluations/base/", data);
+  const res = await api.post<EvaluationResponse>("evaluations/", data);
   const raw = res.data;
   return EvaluationAdapter(raw);
 };
@@ -51,8 +59,14 @@ export const updateEvaluation = async (
   code: string,
   payload: Partial<EvaluationRequest>
 ): Promise<Evaluation> => {
-  const res = await api.put(`evaluations/${code}/`, payload);
-  return EvaluationAdapter(res.data);
+  try {
+    const res = await api.patch(`evaluations/${code}/`, payload);
+    return EvaluationAdapter(res.data);
+  } catch (err: any) {
+    console.error("Error PATCH:", err.response?.data);
+    throw err;
+  }
+
 };
 
 
@@ -61,6 +75,8 @@ export const deleteEvaluation = async (code: string): Promise<void> => {
 };
 
 
+
+//fuera de funcionamiento kiza
 export const updateEvaluationStatus = async (
   code: string,
   statusId: number
@@ -68,6 +84,13 @@ export const updateEvaluationStatus = async (
   const res = await api.put(`evaluations/${code}/status/`, { statusId });
   return EvaluationAdapter(res.data);
 };
+
+
+
+
+
+
+
 
 
 
@@ -86,6 +109,38 @@ export const addConfigToEvaluation = async (data: EvaluationConfigRequest): Prom
 };
 
 
+
+
+export const getEvaluationStatus = async (): Promise<evaluationStatus[]> => {
+  const res = await api.get("evaluations/status/");
+  const data: evaluationStatusResponse[] = res.data.results ?? res.data;
+  return data.map(evaluationStatusAdapter);
+};
+
+
+
+
+
+
+
+
+// aun por usar
+export const assignStudentsToEvaluation = async (
+  code: string,
+  payload: AssignStudentsRequest
+): Promise<AssignStudents> => {
+  const { data } = await api.post<AssignStudentsResponse>(
+    `/evaluations/${code}/assign-students/`,
+    payload
+  );
+  return AssignStudentsAdapter(data);
+};
+
+
+export const removeStudentsFromEvaluation = async (code: string, payload: RemoveStudentsRequest) => {
+  const { data } = await api.post(`/evaluations/${code}/remove-students/`, payload);
+  return data;
+};
 
 
 

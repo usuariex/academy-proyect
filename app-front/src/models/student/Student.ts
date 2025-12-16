@@ -1,6 +1,5 @@
 import type {
-  EvaluationExerciseResponse,
-  EvaluationResponse, EvaluationConfigResponse,
+  EvaluationResponse,
 } from "@/models/evaluation";
 
 
@@ -140,6 +139,38 @@ export interface Sexo {
 
 
 
+export interface StudentsByEvaluationResponse {
+  assigned: StudentEvaluationResponse[];
+  available: StudentResponse[];
+  pagination: {
+    assigned: PaginationMeta;
+    available: PaginationMeta;
+  };
+}
+export interface StudentsByEvaluation {
+  assigned: StudentEvaluation[];
+  available: Student[];
+  pagination: {
+    assigned: PaginationMeta;
+    available: PaginationMeta;
+  };
+}
+
+
+
+
+
+export interface PaginationMeta {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results?: unknown;
+}
+
+
+
+
+
 export interface StudentEvaluationResponse {
   studentEvaluationId: number;
   studentUuid: string;
@@ -149,16 +180,9 @@ export interface StudentEvaluationResponse {
   performedAt: string | null;
   observations?: string | null;
   status?: string | null;
-  assigned_exercise?: EvaluationExerciseResponse;
-  assigned_config?: EvaluationConfigResponse;
+  assigned_exercise?: assignedExerciseResponse | null;
+  assigned_config?: assignedConfigResponse | null;
   [key: string]: unknown;
-}
-
-export interface PaginatedResponse {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: StudentEvaluationResponse[];
 }
 
 export interface StudentEvaluation {
@@ -176,8 +200,23 @@ export interface StudentEvaluation {
   configName: string | null;
 }
 
-export interface StudentsServiceResult {
-  raw: PaginatedResponse;
-  items: StudentEvaluation[];
+
+
+export interface assignedExerciseResponse {
+  id: number;
+  name: string;
+}
+export interface assignedConfigResponse {
+  id: number;
+  name: string;
 }
 
+
+export interface AssignedExercise {
+  id: number;
+  name: string;
+}
+export interface AssignedConfig {
+  id: number;
+  name: string;
+}

@@ -1,4 +1,3 @@
-/* src/components/ui/Modal/Modal.module.css */
 .overlay {
   position: fixed;
   inset: 0;
@@ -13,7 +12,6 @@
   position: relative;
   background: #f4f4f4;
   border: 1px solid rgba(120, 144, 156, 0.2);
-  /* border-radius: 6px; */
   box-shadow: 0 22px 40px rgba(0, 0, 0, 0.45);
   height: 100vh;
   overflow: hidden;
@@ -21,44 +19,6 @@
   flex-direction: column;
   width: 98vw;
   animation: modal-enter 160ms ease-out;
-}
-
-
-
-.sm {
-  width: 420px;
-}
-
-.md {
-  width: 640px;
-}
-
-.lg {
-  width: 860px;
-}
-
-.xl {
-  width: 1040px;
-}
-
-.normal {
-  width: 95vw;
-}
-
-
-.header {
-  display: flex;
-  justify-content: center;
-  padding: 20px 14px;
-  border-bottom: 1px solid rgba(120, 144, 156, 0.18);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2));
-}
-
-
-
-.title {
-  font-size: 18px;
-  font-weight: 600;
 }
 
 

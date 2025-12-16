@@ -1,5 +1,4 @@
 
-
 from rest_framework import routers
 from .views import (
     EvaluationStatusViewSet,
@@ -8,7 +7,6 @@ from .views import (
     TheoryConfigViewSet,
     EvaluationViewSet,
     TheoryEvaluationConfigViewSet,
-    EvaluationStudentViewSet,
     TheoryEvaluationViewSet,
     PhysicalEvaluationViewSet
 )
@@ -32,16 +30,14 @@ router.register(r'theory', TheoryEvaluationViewSet,
 router.register(r'physical', PhysicalEvaluationViewSet,
                 basename='physical-evaluation')
 
-
-# listar evaluaciones lista principal crud y resumen
-# /api/evaluations/554541/
-# GET /api/evaluations/<id>/summary/
-router.register(r'base', EvaluationViewSet, basename='evaluation')
-
 router.register(r'exercises', ExerciseViewSet, basename='exercise')
 
-router.register(r'', EvaluationStudentViewSet,
-                basename='evaluation-student')
+# listar evaluaciones lista principal crud y resumen
+# /api/evaluations/base/{code}/
+# /api/evaluations/base/{code}/summary/
+
+# /api/evaluations/{code}/students/
+router.register(r'', EvaluationViewSet, basename='evaluation')
 
 
 urlpatterns = router.urls

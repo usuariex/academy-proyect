@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 import styles from "./ModalActions.module.css";
 
 interface Props {
@@ -29,3 +29,4 @@ const ModalActions: React.FC<Props> = ({
 );
 
 export default ModalActions;
+ */

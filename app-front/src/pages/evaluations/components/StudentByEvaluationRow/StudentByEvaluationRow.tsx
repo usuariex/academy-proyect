@@ -1,4 +1,4 @@
-import { useDeleteEvaluation } from "@evaluations/hooks";
+/* import { useDeleteEvaluation } from "@evaluations/hooks";
 import { BaseActionButton } from "@/components/ui";
 import { evaluationActions } from "@evaluations/constants";
 import type { Evaluation } from "@/models/evaluation";
@@ -23,7 +23,7 @@ export const StudentByEvaluationRow = ({ row, onSelect }: Props) => {
     }
   };
 
-  return (
+  return (a
     <tr onClick={() => onSelect?.(row)}>
       <td>{row.name}</td>
       <td>{row.plannedDate}</td>
@@ -42,3 +42,4 @@ export const StudentByEvaluationRow = ({ row, onSelect }: Props) => {
     </tr>
   );
 };
+ */

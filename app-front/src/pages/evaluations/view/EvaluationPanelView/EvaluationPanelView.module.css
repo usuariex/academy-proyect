@@ -56,6 +56,10 @@
   align-items: end;
 }
 
+.searchInput__custom {
+  width: 60%;
+}
+
 
 .filters__selects {
   display: flex;

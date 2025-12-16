@@ -1,13 +1,13 @@
-import React from 'react';
-/* import './FormModal.css'; // estilos externos opcionales */
+/* import React from 'react';
+
 
 interface FormModalProps {
-  visible: boolean;              // controla si se muestra
-  onClose: () => void;           // función para cerrar
-  title?: string;                // título opcional
-  children: React.ReactNode;     // contenido dinámico (ej. un formulario)
-  size?: 'small' | 'medium' | 'large'; // tamaño opcional
-  variant?: 'default' | 'danger' | 'success'; // estilos opcionales
+  visible: boolean;            
+  onClose: () => void;           
+  title?: string;                
+  children: React.ReactNode;     
+  size?: 'small' | 'medium' | 'large'; 
+  variant?: 'default' | 'danger' | 'success'; 
 }
 
 const FormModal: React.FC<FormModalProps> = ({
@@ -34,3 +34,4 @@ const FormModal: React.FC<FormModalProps> = ({
 };
 
 export default FormModal;
+ */

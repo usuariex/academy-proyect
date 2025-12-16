@@ -1,32 +1,41 @@
-import React from 'react';
-/* import './ConfirmModal.css'; // estilos externos opcionales */
+import styles from "./ConfirmModal.module.css";
 
 interface ConfirmModalProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  ConteinerClassName?: string;
   message: string;
+  confirmText?: string;   // 👈 texto del botón de confirmación
+  cancelText?: string;    // 👈 texto del botón de cancelar
+  messageClassname?: string;
 }
 
-const ConfirmModal: React.FC<ConfirmModalProps> = ({
+export function ConfirmModal({
   visible,
   onClose,
   onConfirm,
   message,
-}) => {
+  messageClassname = '',
+  ConteinerClassName = '',
+  confirmText = "Sí",
+  cancelText = "No",
+}: ConfirmModalProps) {
   if (!visible) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-container small danger">
-        <p>{message}</p>
-        <div className="modal-actions">
-          <button onClick={onConfirm}>Sí</button>
-          <button onClick={onClose}>No</button>
+    <div className={styles.modalOverlay}>
+      <div className={`${styles.modalContainer} ${ConteinerClassName}`}>
+        <p className={`${styles.message} ${messageClassname}`}>{message}</p>
+        <div className={styles.modalActions}>
+          <button className={`${styles.btn} ${styles.btnDanger}`} onClick={onConfirm}>
+            {confirmText}
+          </button>
+          <button className={`${styles.btn} ${styles.btnSecondary}`} onClick={onClose}>
+            {cancelText}
+          </button>
         </div>
       </div>
     </div>
   );
-};
-
-export default ConfirmModal;
+}

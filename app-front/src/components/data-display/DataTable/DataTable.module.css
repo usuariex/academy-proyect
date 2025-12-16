@@ -1,11 +1,12 @@
-/* DataTable.module.css */
 .table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
     background-color: #fff;
-    table-layout: fixed;
+    table-layout: auto;
+
 }
+
 
 .table th,
 .table td {
@@ -27,7 +28,7 @@
     background-color: #fafafa;
 }
 
-/* Variantes */
+
 .striped tr:nth-child(even) {
     background-color: #f9f9f9;
 }
@@ -41,21 +42,4 @@
 .compact th {
     padding: 0.4rem;
     font-size: 0.85rem;
-}
-
-/* Proporciones de columnas */
-.colName {
-    width: 30%;
-}
-
-.colGrade {
-    width: 15%;
-}
-
-.colResult {
-    width: 25%;
-}
-
-.colActions {
-    width: 30%;
 }

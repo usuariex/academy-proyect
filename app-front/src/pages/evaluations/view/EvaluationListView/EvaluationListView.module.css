@@ -1,68 +1,151 @@
 .evaluationList {
-  width: 100%;
-  background: #f9fafb;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background-color: #fafafa;
+  min-height: 100%;
 }
+
+
+.filtersBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.searchInput {
+  display: flex;
+  width: 50%;
+}
+
+.filtersRight {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.selectField {
+  flex: 1 1 auto;
+  min-width: 140px;
+}
+
+
+
+.dateFilters {
+  flex: 1 1 auto;
+  display: flex;
+  gap: 0.5rem;
+  min-width: 160px;
+}
+
+.dateFilters label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.875rem;
+  color: #444;
+}
+
+.dateFilters input[type="date"] {
+  margin-top: 0.25rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+
+.filterButton {
+  flex: 0 0 auto;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  background: #0078d4;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background 0.2s ease;
+}
+
+.filterButton:hover {
+  background: #005fa3;
+}
+
+
+.activeChips {
+  padding: 0 1rem;
+}
+
+
 
 .content__main {
   display: flex;
-  gap: 25px;
+  align-items: flex-start;
+  gap: 1.5rem;
 }
 
 
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #ffffff;
-  border-radius: 6px;
-  overflow: hidden;
+.table__custom {
+  flex: 3.5;
 }
 
-.thead {
-  background: #e5e5e5;
-  color: #ffffff;
+.card__custom {
+  flex: 1;
 }
 
-.th {
-  padding: 0.75rem 1rem;
-  text-align: left;
-  font-weight: 600;
+.card__placeholder {
+  padding: 1.8rem;
 }
 
-.tbody .tr {
-  border-bottom: 1px solid #e5e7eb;
-  transition: background 0.2s ease;
-  cursor: pointer;
-}
-
-.tr:hover {
-  background: #f1f5f9;
-}
-
-.td {
-  padding: 0.75rem 1rem;
-  color: #374151;
-}
-
-
-
-.card {
-  width: 25%;
-}
-
-
-.selected {
-  background: #dbeafe;
-  /* azul claro */
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .loading {
-  color: #2563eb;
-  font-weight: 500;
+  color: #0078d4;
 }
 
 .error {
-  color: #dc2626;
-  font-weight: 500;
+  color: #d83b01;
+}
+
+
+
+
+@media (max-width: 768px) {
+  .filtersBar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filtersRight {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchInput,
+  .selectField,
+  .dateFilters,
+  .filterButton {
+    flex: 1 1 100%;
+    /* en móvil ocupan todo el ancho */
+  }
+
+  .dateFilters {
+    flex-direction: column;
+  }
+
+  .content__main {
+    flex-direction: column;
+  }
 }

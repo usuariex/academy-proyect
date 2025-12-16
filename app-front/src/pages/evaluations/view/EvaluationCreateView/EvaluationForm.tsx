@@ -121,9 +121,9 @@ export const EvaluationForm = () => {
               value={form.statusId ?? 1}
               onChange={(e) => handleChange("statusId", Number(e.target.value))}
             >
-              <option value={1}>Activa</option>
-              <option value={2}>Pendiente</option>
-              <option value={3}>Finalizada</option>
+              <option value={2}>Sin asignar</option>
+              <option value={1}>Pendiente</option>
+              <option value={5}>Programada</option>
             </select>
           </label>
 

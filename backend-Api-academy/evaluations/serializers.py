@@ -1,11 +1,9 @@
 import rest_framework.serializers as serializers
 from .services.calculate_grade import calculate_theory_grade
-from academy.settings import UMBRAL_APROBACION
-from datetime import date
+from django.db import models
+
 from .models import EvaluationStatus, EvaluationType, EvaluationStatus, EvaluationType, Exercise, TheoryConfig, Evaluation, EvaluationStudent, TheoryEvaluation, PhysicalEvaluation, TheoryEvaluationConfig
 import django.conf as settings
-from django.db import transaction
-
 from .services.evaluations_service import create_evaluation_with_assignment, EvaluationAssignmentError
 
 
@@ -54,11 +52,11 @@ class EvaluationSerializer(serializers.ModelSerializer):
     )
     typeName = serializers.CharField(source='type.type_name', read_only=True)
 
-    description = serializers.CharField()
-    plannedDate = serializers.DateField(source='planned_date')
+    description = serializers.CharField(required=False, allow_blank=True)
+    plannedDate = serializers.DateField(source='planned_date', required=False)
 
     statusId = serializers.PrimaryKeyRelatedField(
-        source='status', queryset=EvaluationStatus.objects.all()
+        source='status', queryset=EvaluationStatus.objects.all(), required=False
     )
     statusName = serializers.CharField(
         source='status.status_name', read_only=True)
@@ -74,10 +72,13 @@ class EvaluationSerializer(serializers.ModelSerializer):
     )
 
     # --- read-only outputs (from related tables) ---
-    exerciseId_read = serializers.SerializerMethodField()
+    exerciseId = serializers.SerializerMethodField()
     exerciseName = serializers.SerializerMethodField()
-    configId_read = serializers.SerializerMethodField()
+    configId = serializers.SerializerMethodField()
     configName = serializers.SerializerMethodField()
+    studentsCount = serializers.SerializerMethodField()
+    hasGradedStudents = serializers.SerializerMethodField()
+    totalQuestions = serializers.SerializerMethodField()
 
     class Meta:
         model = Evaluation
@@ -85,14 +86,12 @@ class EvaluationSerializer(serializers.ModelSerializer):
             'code', 'name', 'description',
             'typeId', 'typeName', 'statusId', 'statusName',
             'createdAt', 'plannedDate',
-            # write-only inputs
             'exerciseId', 'configId',
-            # read-only outputs
-            'exerciseId_read', 'exerciseName', 'configId_read', 'configName',
+            'exerciseId', 'exerciseName', 'configId', 'configName', 'studentsCount', 'hasGradedStudents', 'totalQuestions'
         ]
 
     # ---------- read helpers ----------
-    def get_exerciseId_read(self, obj):
+    def get_exerciseId(self, obj):
         ee = getattr(obj, 'evaluation_exercises', None)
         ee = ee.first() if ee else None
         return ee.exercise_id if ee else None
@@ -102,7 +101,7 @@ class EvaluationSerializer(serializers.ModelSerializer):
         ee = ee.select_related('exercise').first() if ee else None
         return ee.exercise.exercise_name if ee and ee.exercise else None
 
-    def get_configId_read(self, obj):
+    def get_configId(self, obj):
         tc_qs = getattr(obj, 'theoryevaluationconfig_set', None)
         tc = tc_qs.first() if tc_qs else None
         return tc.config_id if tc else None
@@ -112,7 +111,28 @@ class EvaluationSerializer(serializers.ModelSerializer):
         tc = tc_qs.select_related('config').first() if tc_qs else None
         return tc.config.config_name if tc and tc.config else None
 
+    def get_studentsCount(self, obj):
+        # Cuenta los registros en EvaluationStudent asociados a esta evaluación
+        return EvaluationStudent.objects.filter(evaluation=obj).count()
+
+    def get_hasGradedStudents(self, obj):
+        return EvaluationStudent.objects.filter(
+            evaluation=obj
+        ).filter(
+            models.Q(theoryevaluation__grade__isnull=False) |
+            models.Q(physicalevaluation__grade__isnull=False)
+        ).exists()
+
+    def get_totalQuestions(self, obj):
+        # Solo si la evaluación es Teórica
+        if obj.type and obj.type.type_name == "Teorica":
+            tc_qs = getattr(obj, 'theoryevaluationconfig_set', None)
+            tc = tc_qs.select_related('config').first() if tc_qs else None
+            return tc.config.total_questions if tc and tc.config else None
+        return None
+
     # ---------- create ----------
+
     def create(self, validated_data):
         # extraer objetos temporales validados por PrimaryKeyRelatedField (source)
         exercise_obj = validated_data.pop('exercise_obj', None)
@@ -132,6 +152,22 @@ class EvaluationSerializer(serializers.ModelSerializer):
             return evaluation
         except EvaluationAssignmentError as e:
             raise serializers.ValidationError({"non_field_errors": [str(e)]})
+
+    def update(self, instance, validated_data):
+        exercise_obj = validated_data.pop('exercise_obj', None)
+        config_obj = validated_data.pop('config_obj', None)
+
+        if exercise_obj is not None:
+            instance.exercise = exercise_obj
+        if config_obj is not None:
+            instance.config = config_obj
+
+        # actualiza los demás campos
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
 
 
 class TheoryEvaluationConfigSerializer(serializers.ModelSerializer):
@@ -230,7 +266,9 @@ class TheoryEvaluationSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
         max_digits=5,
-        decimal_places=2
+        decimal_places=2,
+        coerce_to_string=False,
+        read_only=True
     )
     observations = serializers.CharField(
         required=False,

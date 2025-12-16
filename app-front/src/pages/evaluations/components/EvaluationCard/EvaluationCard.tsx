@@ -1,5 +1,4 @@
-
-import React from 'react';
+import { formatDateTime } from '@/utilities';
 import styles from './EvaluationCard.module.css';
 import type { Evaluation } from '@/models/evaluation';
 
@@ -7,48 +6,35 @@ export interface Props {
     evaluation: Evaluation;
     onView?: (evaluation: Evaluation) => void;
     onAssign?: (evaluation: Evaluation) => void;
+    className?: string;
 }
 
-export const EvaluationCard: React.FC<Props> = ({ evaluation, onView, onAssign }) => {
-
-
-    const formatDate = (iso?: string | null) => {
-        if (!iso) return '—';
-        try {
-            const d = new Date(iso);
-            return d.toLocaleDateString();
-        } catch {
-            return iso;
-        }
-    };
+export const EvaluationCard = ({ evaluation, onView, onAssign, className = '' }: Props) => {
+    console.log(evaluation);
 
     return (
-        <div className={styles.evaluationCard} role="group" aria-label={`Evaluación ${evaluation.name}`}>
+        <div
+            className={`${styles.evaluationCard} ${className}`}
+            role="group"
+            aria-label={`Evaluación ${evaluation.name}`}
+        >
             <div className={styles.evaluationCard__info}>
-
-                <h2 className={styles.evaluationCard__title}>{evaluation.name ?? 'Sin nombre'}</h2>
-
+                <h2 className={styles.evaluationCard__title}>
+                    {evaluation.name ?? 'Sin nombre'}
+                </h2>
 
                 <div className={styles.evaluationCard__meta}>
-
-                    <p>
-                        <span>Creada:</span> {formatDate(evaluation.createdAt)}
-                    </p>
-
-                    <p>
-                        <span>Fecha planificada:</span> {formatDate(evaluation.plannedDate)}
-                    </p>
-
-                    <p>
-                        <span>Estado:</span> {evaluation.statusName ?? '—'}
-                    </p>
-
-                    <p>
-                        <span>Tipo:</span> {evaluation.typeName ?? '—'}
-                    </p>
-                    <p>
-                        <span>Descripcion:</span> {evaluation.description ?? '—'}
-                    </p>
+                    <p><span>Creada:</span> {formatDateTime(evaluation.createdAt)}</p>
+                    <p><span>Fecha planificada:</span> {formatDateTime(evaluation.plannedDate)}</p>
+                    <p><span>Estado:</span> {evaluation.statusName ?? '—'}</p>
+                    <p><span>Tipo:</span> {evaluation.typeName ?? '—'}</p>
+                    <p><span>Descripción:</span> {evaluation.description ?? '—'}</p>
+                    {evaluation.exerciseName && (
+                        <p><span>Ejercicio:</span> {evaluation.exerciseName}</p>
+                    )}
+                    {evaluation.configName && (
+                        <p><span>Configuración:</span> {evaluation.configName}</p>
+                    )}
                 </div>
             </div>
 

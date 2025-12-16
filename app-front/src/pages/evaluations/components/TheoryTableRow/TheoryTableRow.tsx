@@ -60,21 +60,39 @@ export const TheoryTableRow = ({ row: student }: Props) => {
           </>
         )}
       </td>
+
       <td className={`${styles.cell} ${styles.actions}`}>
         {isEditing ? (
           <>
-            <BaseActionButton {...evaluationActions.save} onClick={save} disabled={isSaving} />
-            <BaseActionButton {...evaluationActions.cancel} onClick={cancelEdit} disabled={isSaving} />
-
+            <BaseActionButton
+              {...evaluationActions.save}
+              onClick={save}
+              disabled={isSaving}
+            />
+            <BaseActionButton
+              {...evaluationActions.cancel}
+              onClick={cancelEdit}
+              disabled={isSaving}
+            />
           </>
         ) : (
-          <BaseActionButton
-            {...(row.grade ? evaluationActions.save : evaluationActions.grade)}
-            onClick={startEdit}
-          />
-
+          <>
+            {row.grade != null ? (
+              <BaseActionButton
+                {...evaluationActions.edit}
+                onClick={startEdit}
+              />
+            ) : (
+              <BaseActionButton
+                {...evaluationActions.grade}
+                onClick={startEdit}
+              />
+            )}
+          </>
         )}
       </td>
+
+
     </tr>
 
   );

@@ -7,7 +7,6 @@ import { Tabs } from '@/components/layout';
 import { useStudentsByEvaluation } from '@/hooks/students';
 import type { StudentEvaluation } from '@/models/student';
 import type { Evaluation, StatusGrade, } from '@/models/evaluation';
-import type { SelectOption } from '@/models/ui';
 import { classifyGradeStatus } from '@/utilities/evaluation';
 import { SearchInput, SelectField } from '@/components/forms';
 import styles from './EvaluationPanelView.module.css';
@@ -15,6 +14,8 @@ import { useEvaluationSummary } from '@evaluations/hooks';
 
 import { PhysicalEvaluationPanel, TheoreticalEvaluationPanel } from '@evaluations/view';
 import { StudentsByEvaluationTable } from '@evaluations/components';
+import { FilterChips } from '@/components/ui';
+import { buildFilterChips } from '@/utilities';
 
 
 type TabKey = 'grades' | 'evaluate' | 'others';
@@ -29,30 +30,36 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
 
   const [activeTab, setActiveTab] = useState<TabKey>('grades');
 
-  const [resultFilter, setResultFilter] = useState<'all' | StatusGrade>('all');
-  const [gradedFilter, setGradedFilter] = useState<'all' | 'graded' | 'not_graded'>('all');
+  const [resultFilter, setResultFilter] = useState<'Todos' | StatusGrade>('Todos');
+  const [gradedFilter, setGradedFilter] = useState<'Todos' | 'Calificado' | 'No calificado'>('Todos');
+
+
   const [search, setSearch] = useState('');
+
+
 
   // Data hooks
   const { data, isLoading: studentsLoading, error: studentsError/* , refetch  */ } = useStudentsByEvaluation(evaluation.code, 1, 20);
-  const students = data?.items ?? [];
+  const students = data?.assigned ?? [];
 
 
 
   // Filtrado memoizado
   const filteredStudents = useMemo(() => {
     return students.filter((s: StudentEvaluation) => {
-      const normalized = classifyGradeStatus(s.status ?? (s.grade == null ? 'Sin calificar' : 'Desaprobado'));
+      const normalized = classifyGradeStatus(
+        s.status ?? (s.grade == null ? 'Sin calificar' : 'Desaprobado')
+      );
 
-      // Resultado (approved/failed/ungraded)
-      if (resultFilter !== 'all' && normalized !== resultFilter) return false;
+      // Resultado
+      if (resultFilter !== 'Todos' && normalized !== resultFilter) return false;
 
       // Calificado / Sin calificar
       const isGraded = s.grade !== null && s.grade !== undefined;
-      if (gradedFilter === 'graded' && !isGraded) return false;
-      if (gradedFilter === 'not_graded' && isGraded) return false;
+      if (gradedFilter === 'Calificado' && !isGraded) return false;
+      if (gradedFilter === 'No calificado' && isGraded) return false;
 
-      // Búsqueda por nombre o uuid (opcional)
+      // Búsqueda
       if (search.trim()) {
         const q = search.trim().toLowerCase();
         const name = (s.studentFullName ?? '').toLowerCase();
@@ -66,18 +73,42 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
 
 
 
-  const resultOptions: SelectOption[] = [
-    { label: 'Todos los resultados', value: 'all' },
-    { label: 'Aprobados', value: 'approved' },
-    { label: 'Desaprobados', value: 'failed' },
-    { label: 'Sin calificar', value: 'ungraded' },
+
+  const resultOptions = [
+    { value: 'Todos', label: 'Todos' },
+    { value: 'Aprobado', label: 'Aprobado' },
+    { value: 'Desaprobado', label: 'Desaprobado' },
+    { value: 'Sin calificar', label: 'Sin calificar' },
+    { value: 'Desconocido', label: 'Desconocido' },
   ];
 
-  const gradedOptions: SelectOption[] = [
-    { label: 'Todos', value: 'all' },
-    { label: 'Calificados', value: 'graded' },
-    { label: 'Sin calificar', value: 'not_graded' },
+  const gradedOptions = [
+    { value: 'Todos', label: 'Todos' },
+    { value: 'Calificado', label: 'Calificado' },
+    { value: 'No calificado', label: 'No calificado' },
   ];
+
+
+
+
+  const chips = buildFilterChips([
+    {
+      active: resultFilter !== "Todos",
+      label: `Estado: ${resultFilter}`,
+      onRemove: () => setResultFilter("Todos"),
+    },
+    {
+      active: gradedFilter !== "Todos",
+      label: `Tipo: ${gradedFilter}`,
+      onRemove: () => setGradedFilter("Todos"),
+    },
+    {
+      active: !!search,
+      label: `Código contiene "${search}"`,
+      onRemove: () => setSearch(""),
+    },
+  ]);
+
 
 
   const { data: metrics, isLoading: metricsLoading, error: metricsError } = useEvaluationSummary(evaluation.code);
@@ -135,36 +166,44 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
         )}
 
 
-        {activeTab === 'grades' && (
-          <div className={styles.section__filters}>
-            <SearchInput
-              value={search}
-              onChange={setSearch}
-              onClear={() => setSearch('')}
-              onSubmit={handleSearchSubmit}
-              placeholder="Search student"
+
+        <div className={styles.section__filters}>
+          <SearchInput
+            value={search}
+            onChange={setSearch}
+            onClear={() => setSearch('')}
+            onSubmit={handleSearchSubmit}
+            placeholder="Search student"
+            className={styles.searchInput__custom}
+          />
+
+
+          <div className={styles.filters__selects}>
+            <SelectField
+              id="result"
+              label="Resultado"
+              value={resultFilter}
+              options={resultOptions}
+              onChange={(e) =>
+                setResultFilter(e.target.value as 'Todos' | 'Aprobado' | 'Desaprobado' | 'Sin calificar')}
             />
 
-
-            <div className={styles.filters__selects}>
-              <SelectField
-                id="result"
-                label="Resultado"
-                value={resultFilter}
-                options={resultOptions}
-                onChange={(e) => setResultFilter(e.target.value as 'all' | StatusGrade)}
-              />
-
-              <SelectField
-                id="graded"
-                label="Estado de calificación"
-                value={gradedFilter}
-                options={gradedOptions}
-                onChange={(e) => setGradedFilter(e.target.value as 'all' | 'graded' | 'not_graded')}
-              />
-            </div>
+            <SelectField
+              id="graded"
+              label="Estado de calificación"
+              value={gradedFilter}
+              options={gradedOptions}
+              onChange={(e) =>
+                setGradedFilter(e.target.value as 'Todos' | 'Calificado' | 'No calificado')}
+            />
           </div>
-        )}
+        </div>
+
+
+        <div className={styles.activeChips}>
+          <FilterChips chips={chips} />
+        </div>
+
 
         {activeTab === 'grades' && (
           <>
@@ -194,7 +233,7 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
 
             {evaluation.typeName === 'Teorica' && metrics && (
               <TheoreticalEvaluationPanel
-                students={students}
+                students={filteredStudents}
               /*  evaluationCode={evaluation.code} */
               />
             )}

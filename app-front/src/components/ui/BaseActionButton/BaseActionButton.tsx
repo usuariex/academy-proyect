@@ -1,9 +1,9 @@
 import styles from "./BaseActionButton.module.css";
-
+import type { MouseEvent } from 'react'
 interface Props {
   label: string;
   type: string;
-  onClick: () => void;
+  onClick: (e: MouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 }
 

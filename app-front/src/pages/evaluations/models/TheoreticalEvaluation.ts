@@ -8,7 +8,7 @@ export interface TheoryEvaluationResponse {
     observations: string | null;
 }
 
-export interface TheoryEvaluationPayload {
+export interface TheoryEvaluationRequest {
     studentEvaluationId: number;
     result: number;
     observations?: string | null;

@@ -29,8 +29,8 @@ export const SearchInput: React.FC<SearchInputProps> = ({
   };
 
   return (
-    <div className={styles.searchBar}>
-      <div className={`${styles.searchBarContent} ${className}`}>
+    <div className={`${styles.searchBar} ${className}`}>
+      <div className={`${styles.searchBarContent}`}>
         <input
           className={styles.input}
           type="text"

@@ -4,10 +4,12 @@ import type {
   StudentResponse,
   StudentRequest,
   StudentProfileResponse,
-  StudentsServiceResult,
-  PaginatedResponse
+  Student,
+  StudentEvaluation,
+  StudentsByEvaluation,
+  StudentsByEvaluationResponse
 } from "@/models/student";
-import { StudentsEvaluationAdapter } from "@/adapters";
+import { mapAvailableStudent, StudentsEvaluationAdapter } from "@/adapters";
 
 
 export const getStudents = async (
@@ -33,14 +35,23 @@ export const getStudentsByEvaluation = async (
   code: string,
   page = 1,
   pageSize = 20
-): Promise<StudentsServiceResult> => {
+): Promise<StudentsByEvaluation> => {
   const url = `/evaluations/${encodeURIComponent(code)}/students/`;
-  const { data } = await api.get<PaginatedResponse>(url, {
+
+  // Tipamos la respuesta cruda con StudentsByEvaluationResponse
+  const { data } = await api.get<StudentsByEvaluationResponse>(url, {
     params: { page, page_size: pageSize },
   });
 
-  const items = Array.isArray(data.results) ? StudentsEvaluationAdapter(data.results) : [];
-  return { raw: data, items };
+  // Adaptamos asignados y disponibles
+  const assigned: StudentEvaluation[] = StudentsEvaluationAdapter(data.assigned);
+  const available: Student[] = data.available.map(mapAvailableStudent);
+
+  return {
+    assigned,
+    available,
+    pagination: data.pagination,
+  };
 };
 
 

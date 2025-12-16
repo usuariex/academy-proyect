@@ -1,5 +1,5 @@
 
-import type { PaginatedResponse, StudentsServiceResult, Student, StudentEvaluation, StudentEvaluationResponse, StudentResponse } from '@/models/student';
+import type { Student, StudentEvaluation, StudentEvaluationResponse, StudentResponse } from '@/models/student';
 
 
 /* CHECKED */
@@ -29,15 +29,9 @@ export function StudentResponseAdapter(data: StudentResponse): Student {
 
 
 
-
-
-
-export const mapRaw = (raw: StudentEvaluationResponse): StudentEvaluationResponse => raw;
-
-export const mapStudent = (raw: StudentEvaluationResponse): StudentEvaluation => {
-  const exercise = raw.assigned_exercise ?? null;
-  const config = raw.assigned_config ?? null;
-
+export const mapStudentEvaluation = (
+  raw: StudentEvaluationResponse
+): StudentEvaluation => {
   return {
     studentEvaluationId: raw.studentEvaluationId,
     studentUuid: typeof raw.studentUuid === "string" ? raw.studentUuid : "",
@@ -48,19 +42,53 @@ export const mapStudent = (raw: StudentEvaluationResponse): StudentEvaluation =>
     observations: raw.observations ?? null,
     status: raw.status ?? null,
 
-    exerciseId: exercise && typeof exercise.id === "number" ? exercise.id : null,
-    exerciseName: exercise && typeof exercise.name === "string" ? exercise.name : null,
+    // Adaptar ejercicio asignado
+    exerciseId:
+      raw.assigned_exercise && typeof raw.assigned_exercise.id === "number"
+        ? raw.assigned_exercise.id
+        : null,
+    exerciseName:
+      raw.assigned_exercise && typeof raw.assigned_exercise.name === "string"
+        ? raw.assigned_exercise.name
+        : null,
 
-    configId: config && typeof config.id === "number" ? config.id : null,
-    configName: config && typeof config.name === "string" ? config.name : null,
+    // Adaptar configuración asignada
+    configId:
+      raw.assigned_config && typeof raw.assigned_config.id === "number"
+        ? raw.assigned_config.id
+        : null,
+    configName:
+      raw.assigned_config && typeof raw.assigned_config.name === "string"
+        ? raw.assigned_config.name
+        : null,
   };
 };
 
-export const StudentsEvaluationAdapter = (data: StudentEvaluationResponse[] = []): StudentEvaluation[] =>
-  data.map(mapStudent);
+export const StudentsEvaluationAdapter = (
+  data: StudentEvaluationResponse[] = []
+): StudentEvaluation[] => data.map(mapStudentEvaluation);
 
 
-export const adaptPaginated = (raw: PaginatedResponse): StudentsServiceResult => ({
-  raw,
-  items: (raw.results ?? []).map(mapStudent),
-});
+export const mapAvailableStudent = (raw: StudentResponse): Student => {
+  return {
+    id: raw.id,
+    uuid: raw.uuid,
+    code: raw.code,
+    firstName: raw.firstName,
+    lastNameFather: raw.paternalSurname,
+    lastNameMother: raw.maternalSurname,
+    fullName: raw.fullName,
+    birthDate: raw.birthDate,
+    email: raw.email ?? null,
+    phone: raw.phone ?? null,
+    statusId: raw.statusId,
+    statusName: raw.statusName,
+    genderId: raw.genderId,
+    genderName: raw.genderName,
+    weight: raw.weight ?? null,
+    height: raw.height ?? null,
+    dni: raw.dni,
+    isActive: raw.isActive,
+    createdAt: raw.createdAt,
+  };
+};

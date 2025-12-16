@@ -21,6 +21,92 @@
 /* Guardar = verde */
 .btn-save {
   background-color: #4caf50;
+
+  .button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+
+  .button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  /* Guardar (verde, acción positiva) */
+  .btn-save {
+    background-color: #28a745;
+    color: #fff;
+  }
+
+  .btn-save:hover:not(:disabled) {
+    background-color: #218838;
+  }
+
+  /* Editar (azul, acción secundaria) */
+  .btn-edit {
+    background-color: #007bff;
+    color: #fff;
+  }
+
+  .btn-edit:hover:not(:disabled) {
+    background-color: #0056b3;
+  }
+
+  /* Eliminar (rojo, acción destructiva) */
+  .btn-delete {
+    background-color: #dc3545;
+    color: #fff;
+  }
+
+  .btn-delete:hover:not(:disabled) {
+    background-color: #a71d2a;
+  }
+
+  /* Cambiar estado (amarillo/naranja, acción de transición) */
+  .btn-status {
+    background-color: #ffc107;
+    color: #212529;
+  }
+
+  .btn-status:hover:not(:disabled) {
+    background-color: #e0a800;
+  }
+
+  /* Cancelar (gris, acción neutral) */
+  .btn-cancel {
+    background-color: #6c757d;
+    color: #fff;
+  }
+
+  .btn-cancel:hover:not(:disabled) {
+    background-color: #5a6268;
+  }
+
+  /* Calificar (morado, acción académica) */
+  .btn-grade {
+    background-color: #6f42c1;
+    color: #fff;
+  }
+
+  .btn-grade:hover:not(:disabled) {
+    background-color: #5936a2;
+  }
+
+  /* Ver (turquesa, acción informativa) */
+  .btn-view {
+    background-color: #17a2b8;
+    color: #fff;
+  }
+
+  .btn-view:hover:not(:disabled) {
+    background-color: #117a8b;
+  }
+
   color: white;
 }
 

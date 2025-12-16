@@ -1,0 +1,6 @@
+.actionsCell {
+    width: 1px;
+    white-space: nowrap;
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+}

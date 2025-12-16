@@ -1,52 +1,52 @@
 
 import type { StudentEvaluation } from '@/models/student';
 import styles from './StudentsByEvaluationTable.module.css';
+import type { Column } from '@/models/ui';
+import { DataTable, DataTableRow } from '@/components/data-display';
+
 
 interface Props {
   students: StudentEvaluation[];
   onOpenEdit: (student: StudentEvaluation) => void;
 }
 
-export const StudentsByEvaluationTable = ({ students, /* onOpenEdit  */ }: Props) => {
+export const StudentsByEvaluationTable = ({ students }: Props) => {
+
   const Exercise = students.find(s => typeof s.exerciseName === 'string' && s.exerciseName.trim() !== '')?.exerciseName ?? null;
+
+  const columns: Column<StudentEvaluation>[] = [
+    { key: "studentFullName", label: "Alumno", render: (value) => value },
+    {
+      key: "status", label: "Estado",
+      render: (value) => (
+        <span
+          className={`${styles.status} ${value === "Aprobado" ? styles.aprobado :
+            value === "Desaprobado" ? styles.desaprobado :
+              value === "Sin calificar" ? styles.sinCalificar :
+                styles.calificado
+            }`}
+        >
+          {value}
+        </span>
+      )
+    },
+    { key: "grade", label: "Calificación ", render: (value) => value ?? "-" },
+    { key: "result", label: `${Exercise ?? "Respuestas correctas"}`, render: (value) => value ?? "-" },
+    { key: "observations", label: "Observaciones", render: (value) => value ?? "-" },
+  ];
+
+
+
   return (
     <div className={styles.tableWrapper}>
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Alumno</th>
-            <th>Estado</th>
-            <th>Calificacion</th>
-            <th>Resultado de {Exercise}</th>
-            <th>Observations</th>
-          </tr>
-        </thead>
-        <tbody>
-          {students.map((s) => (
-            <tr key={s.studentUuid}>
-              <td>{s.studentFullName}</td>
-              <td>
-                <span
-                  className={`${styles.status} ${s.status === 'Aprobado'
-                    ? styles.aprobado
-                    : s.status === 'Desaprobado'
-                      ? styles.desaprobado
-                      : s.status === 'Sin calificar'
-                        ? styles.sinCalificar
-                        : styles.calificado
-                    }`}
-                >
-                  {s.status}
-                </span>
-              </td>
-              <td>{s.grade ?? '-'}</td>
-              <td>{s.result ?? '-'}</td>
-              <td>{s.observations ?? '-'}</td>
-              {/*  */}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <DataTable<StudentEvaluation>
+        columns={columns}
+        data={students}
+        rowKey={(s) => s.studentUuid}
+        RowComponent={DataTableRow}
+      />
+
     </div>
   );
 };

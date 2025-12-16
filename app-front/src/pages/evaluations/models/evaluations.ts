@@ -72,3 +72,24 @@ export interface TheoryConfig {
     createdAt: Date;
     isActive: boolean;
 }
+
+
+
+
+export interface AssignStudentsResponse {
+    assigned: string[];
+    already_assigned: string[];
+}
+
+export interface AssignStudents {
+    newStudents: string[];
+    skippedStudents: string[];
+}
+
+export interface AssignStudentsRequest {
+    students: string[];
+}
+
+export interface RemoveStudentsRequest {
+    students: string[];
+}

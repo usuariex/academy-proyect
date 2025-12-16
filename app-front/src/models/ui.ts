@@ -42,3 +42,9 @@ export interface Column<T> {
     label: string;
     render?: (value: any, row: T) => ReactNode;
 }
+
+
+export interface FilterChip {
+    label: string;
+    onRemove: () => void;
+}

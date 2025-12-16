@@ -1,29 +1,27 @@
-
-import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateEvaluation } from "@/services/evaluation";
 import type { EvaluationRequest, Evaluation } from "@/models/evaluation";
 
 export function useUpdateEvaluation(code: string, hasGradedStudents: boolean) {
-    const [isSaving, setIsSaving] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
 
-    async function update(payload: Partial<EvaluationRequest>): Promise<Evaluation | null> {
-        setIsSaving(true);
-        setError(null);
-        try {
+    const mutation = useMutation({
+        mutationFn: async (payload: Partial<EvaluationRequest>): Promise<Evaluation> => {
             const safePayload = {
                 ...payload,
                 plannedDate: hasGradedStudents ? undefined : payload.plannedDate,
             };
-            const evaluation = await updateEvaluation(code, safePayload);
-            return evaluation;
-        } catch (err: any) {
-            setError(err?.message ?? "No se pudo actualizar la evaluación.");
-            return null;
-        } finally {
-            setIsSaving(false);
-        }
-    }
+            return updateEvaluation(code, safePayload);
+        },
+        onSuccess: () => {
+            // fuerza refetch de la tabla
+            queryClient.invalidateQueries({ queryKey: ["evaluations"] });
+        },
+    });
 
-    return { update, isSaving, error };
+    return {
+        update: mutation.mutateAsync,
+        isSaving: mutation.isPending,
+        error: mutation.error ? String(mutation.error) : null,
+    };
 }

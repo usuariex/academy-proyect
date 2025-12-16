@@ -9,6 +9,7 @@ interface DataTableProps<T> {
     data: T[];
     rowKey: (row: T) => string | number;
     RowComponent?: ComponentType<{ row: T; columns: Column<T>[] }>;
+    className?: string;
 }
 
 export function DataTable<T>({
@@ -16,9 +17,20 @@ export function DataTable<T>({
     data,
     rowKey,
     RowComponent = DataTableRow,
+    className = ''
 }: DataTableProps<T>) {
     return (
-        <table className={styles.table}>
+        <table className={`${styles.table} ${className}`}>
+            <colgroup>
+                {columns.map((col) => (
+                    <col
+                        key={String(col.key)}
+                        style={col.key === "actions" ? { width: "1px" } : { width: "auto" }}
+                    />
+                ))}
+            </colgroup>
+
+
             <thead>
                 <tr>
                     {columns.map((col) => (

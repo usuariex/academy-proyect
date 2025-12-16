@@ -1,8 +1,8 @@
 import { api } from "@/services";
-import type { TheoryEvaluationResponse, TheoryEvaluationPayload, TheoryEvaluation } from "@evaluations/models";
+import type { TheoryEvaluationResponse, TheoryEvaluationRequest, TheoryEvaluation } from "@evaluations/models";
 import { TheoryEvaluationAdapter } from "@/adapters/evaluation";
 
-// GET por studentEvaluationId
+
 export const getTheoryEvaluationByStudent = async (
   studentEvaluationId: number
 ): Promise<TheoryEvaluation | null> => {
@@ -11,13 +11,15 @@ export const getTheoryEvaluationByStudent = async (
   });
 
   if (Array.isArray(res.data) && res.data.length > 0) {
-    return TheoryEvaluationAdapter(res.data[0]); // devolvemos modelo frontend
+    return TheoryEvaluationAdapter(res.data[0]);
   }
   return null;
 };
 
+
+
 export const updateTheoryEvaluationByStudent = async (
-  payload: TheoryEvaluationPayload
+  payload: TheoryEvaluationRequest
 ): Promise<TheoryEvaluation> => {
   const res = await api.patch<TheoryEvaluationResponse>(
     "/evaluations/theory/update-by-student/",
