@@ -2,9 +2,13 @@ import rest_framework.serializers as serializers
 from .services.calculate_grade import calculate_theory_grade
 from django.db import models
 
-from .models import EvaluationStatus, EvaluationType, EvaluationStatus, EvaluationType, Exercise, TheoryConfig, Evaluation, EvaluationStudent, TheoryEvaluation, PhysicalEvaluation, TheoryEvaluationConfig
+from .models import EvaluationExercise, EvaluationStatus, EvaluationType, EvaluationStatus, EvaluationType, Exercise, TheoryConfig, Evaluation, EvaluationStudent, TheoryEvaluation, PhysicalEvaluation, TheoryEvaluationConfig
 import django.conf as settings
 from .services.evaluations_service import create_evaluation_with_assignment, EvaluationAssignmentError
+from .utils.physical_result import (
+    seconds_decimal_to_time_string,
+    quantity_decimal_to_string,
+)
 
 
 class EvaluationStatusSerializer(serializers.ModelSerializer):
@@ -85,8 +89,8 @@ class EvaluationSerializer(serializers.ModelSerializer):
             'code', 'name', 'description',
             'typeId', 'typeName', 'statusId', 'statusName',
             'createdAt', 'plannedDate',
-            'exerciseId', 'exerciseName',         # outputs
-            'configId', 'configName',             # outputs
+            'exerciseId', 'exerciseName',
+            'configId', 'configName',
             'studentsCount', 'hasGradedStudents', 'totalQuestions'
         ]
 
@@ -148,13 +152,21 @@ class EvaluationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"non_field_errors": [str(e)]})
 
     def update(self, instance, validated_data):
-        exercise_obj = validated_data.pop('exercise_obj', None)
-        config_obj = validated_data.pop('config_obj', None)
+        exercise_id = validated_data.pop('exerciseId', None)
+        config_id = validated_data.pop('configId', None)
 
-        if exercise_obj is not None:
-            instance.exercise = exercise_obj
-        if config_obj is not None:
-            instance.config = config_obj
+        if exercise_id is not None:
+            exercise = Exercise.objects.get(pk=exercise_id)
+            # actualizar relación (si tu modelo Evaluation tiene relación directa)
+            EvaluationExercise.objects.update_or_create(
+                evaluation=instance, defaults={'exercise': exercise}
+            )
+
+        if config_id is not None:
+            config = TheoryConfig.objects.get(pk=config_id)
+            TheoryEvaluationConfig.objects.update_or_create(
+                evaluation=instance, defaults={'config': config}
+            )
 
         # actualiza los demás campos
         for attr, value in validated_data.items():
@@ -317,8 +329,9 @@ class PhysicalEvaluationSerializer(serializers.ModelSerializer):
         max_digits=5, decimal_places=2, allow_null=True)
     observations = serializers.CharField(
         required=False, allow_null=True, allow_blank=True)
-    result = serializers.DecimalField(
-        max_digits=5, decimal_places=2, allow_null=True)
+
+    # 👉 Sobrescribimos el campo result para que devuelva el string formateado
+    result = serializers.SerializerMethodField()
 
     class Meta:
         model = PhysicalEvaluation
@@ -327,7 +340,36 @@ class PhysicalEvaluationSerializer(serializers.ModelSerializer):
             'studentEvaluationId',
             'exerciseUnit',
             'grade',
-            'result',
+            'result',        # único campo, ya formateado
             'performedAt',
             'observations',
         ]
+
+    def get_result(self, obj):
+        """
+        Devuelve el resultado en formato amigable:
+        - Si el ejercicio es de tiempo → "M'SS"
+        - Si es cantidad → "N"
+        """
+        if obj.result is None:
+            return ""
+
+        # Obtener el ejercicio asociado
+        eval_student = getattr(obj, "evaluation_student", None)
+        if not eval_student or not eval_student.evaluation:
+            return quantity_decimal_to_string(obj.result)
+
+        exercise_rel = EvaluationExercise.objects.filter(
+            evaluation=eval_student.evaluation
+        ).select_related("exercise").first()
+        if not exercise_rel:
+            return quantity_decimal_to_string(obj.result)
+
+        exercise = exercise_rel.exercise
+        name = (exercise.exercise_name or "").strip().lower()
+
+        TIME_EXERCISES = {"100m", "1000m", "natación", "natación 25 m"}
+        if name in {x.lower() for x in TIME_EXERCISES}:
+            return seconds_decimal_to_time_string(obj.result)
+
+        return quantity_decimal_to_string(obj.result)

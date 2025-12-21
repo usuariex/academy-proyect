@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django.shortcuts import get_object_or_404
 from .services.assign_students import assign_students, eligible_students
 from .services.evaluation_student_service import (
@@ -11,6 +12,7 @@ from .services.evaluation_student_service import (
     subquery_physical_observations,
 )
 from .services.calculate_grade import calculate_physical_grade
+from .utils.physical_result import parse_quantity_to_decimal, parse_time_to_seconds_decimal
 
 from django.db.models import (
     Case, When, OuterRef, Subquery, Value, F,
@@ -435,19 +437,19 @@ class PhysicalEvaluationViewSet(viewsets.ModelViewSet):
     def update_by_student(self, request):
         """
         Actualiza una evaluación física usando studentEvaluationId.
-        Calcula automáticamente la nota según el criterio (fijo o rango).
+        Convierte el resultado a Decimal y calcula automáticamente la nota.
         """
         student_eval_id = request.data.get("studentEvaluationId")
         if not student_eval_id:
             return Response(
                 {"detail": "studentEvaluationId is required"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # 1. Obtener EvaluationStudent
         eval_student = get_object_or_404(
             EvaluationStudent.objects.select_related("evaluation", "student"),
-            pk=student_eval_id
+            pk=student_eval_id,
         )
 
         # 2. Obtener o crear PhysicalEvaluation
@@ -456,38 +458,50 @@ class PhysicalEvaluationViewSet(viewsets.ModelViewSet):
         )
 
         # 3. Datos enviados por el frontend
-        result = request.data.get("result")
+        result_str = request.data.get("result")
         performed_at = request.data.get("performedAt")
         observations = request.data.get("observations")
 
-        # Validación mínima
-        if result is None:
+        if not result_str:
             return Response(
                 {"detail": "result is required"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         # 4. Obtener ejercicio asignado
-        exercise = EvaluationExercise.objects.get(
+        exercise_rel = EvaluationExercise.objects.filter(
             evaluation=eval_student.evaluation
-        ).exercise
+        ).select_related("exercise").first()
+        if not exercise_rel:
+            return Response(
+                {"detail": "La evaluación no tiene ejercicio asignado"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        exercise = exercise_rel.exercise
 
-        # 5. Obtener género del alumno
-        gender = eval_student.student.gender
+        # 5. Convertir resultado a Decimal según tipo de ejercicio
+        TIME_EXERCISES = {"100m", "1000m", "natación", "natación 25 m"}
+        try:
+            if (exercise.exercise_name or "").strip().lower() in {
+                x.lower() for x in TIME_EXERCISES
+            }:
+                result_dec = parse_time_to_seconds_decimal(result_str)
+            else:
+                result_dec = parse_quantity_to_decimal(result_str)
+        except ValueError as e:
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         # 6. Calcular nota automáticamente
-        grade = calculate_physical_grade(exercise, gender, result)
+        gender = eval_student.student.gender
+        grade = calculate_physical_grade(exercise, gender, result_dec)
 
-        # 7. Guardar valores (performedAt y observations son opcionales)
-        physical_eval.result = result
+        # 7. Guardar valores
+        physical_eval.result = result_dec
         physical_eval.grade = grade
-
         if performed_at is not None:
             physical_eval.performed_at = performed_at
-
         if observations is not None:
             physical_eval.observations = observations
-
         physical_eval.save()
 
         # 8. Respuesta serializada
