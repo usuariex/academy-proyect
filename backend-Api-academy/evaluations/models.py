@@ -1,5 +1,6 @@
 from django.db import models, transaction
 from django.db import models
+from django.forms import ValidationError
 from students.models import Student, Gender
 from academy.settings import UMBRAL_APROBACION
 from django.db.models import Max
@@ -94,10 +95,18 @@ class Exercise(models.Model):
     unit = models.CharField(max_length=15, blank=True,
                             null=True, db_column="unidad")
     is_active = models.BooleanField(default=True, db_column="activo")
+    criteria_type = models.CharField(
+        max_length=10,
+        db_column="tipo_criterio"
+    )
 
     class Meta:
         managed = False
         db_table = 'ejercicio'
+
+    def clean(self):
+        if self.criteria_type not in ("fijo", "rango"):
+            raise ValidationError("tipo_criterio debe ser 'fijo' o 'rango'")
 
 
 class TheoryEvaluationConfig(models.Model):

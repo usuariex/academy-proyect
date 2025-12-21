@@ -10,6 +10,7 @@ from .services.evaluation_student_service import (
     subquery_physical_performed_at,
     subquery_physical_observations,
 )
+from .services.calculate_grade import calculate_physical_grade
 
 from django.db.models import (
     Case, When, OuterRef, Subquery, Value, F,
@@ -429,3 +430,66 @@ class PhysicalEvaluationViewSet(viewsets.ModelViewSet):
         if student_eval_id:
             qs = qs.filter(evaluation_student_id=student_eval_id)
         return qs
+
+    @action(detail=False, methods=["patch"], url_path="update-by-student")
+    def update_by_student(self, request):
+        """
+        Actualiza una evaluación física usando studentEvaluationId.
+        Calcula automáticamente la nota según el criterio (fijo o rango).
+        """
+        student_eval_id = request.data.get("studentEvaluationId")
+        if not student_eval_id:
+            return Response(
+                {"detail": "studentEvaluationId is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 1. Obtener EvaluationStudent
+        eval_student = get_object_or_404(
+            EvaluationStudent.objects.select_related("evaluation", "student"),
+            pk=student_eval_id
+        )
+
+        # 2. Obtener o crear PhysicalEvaluation
+        physical_eval, _ = PhysicalEvaluation.objects.get_or_create(
+            evaluation_student=eval_student
+        )
+
+        # 3. Datos enviados por el frontend
+        result = request.data.get("result")
+        performed_at = request.data.get("performedAt")
+        observations = request.data.get("observations")
+
+        # Validación mínima
+        if result is None:
+            return Response(
+                {"detail": "result is required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # 4. Obtener ejercicio asignado
+        exercise = EvaluationExercise.objects.get(
+            evaluation=eval_student.evaluation
+        ).exercise
+
+        # 5. Obtener género del alumno
+        gender = eval_student.student.gender
+
+        # 6. Calcular nota automáticamente
+        grade = calculate_physical_grade(exercise, gender, result)
+
+        # 7. Guardar valores (performedAt y observations son opcionales)
+        physical_eval.result = result
+        physical_eval.grade = grade
+
+        if performed_at is not None:
+            physical_eval.performed_at = performed_at
+
+        if observations is not None:
+            physical_eval.observations = observations
+
+        physical_eval.save()
+
+        # 8. Respuesta serializada
+        serializer = self.get_serializer(physical_eval)
+        return Response(serializer.data)

@@ -81,7 +81,6 @@ export const StudentProfileCard: FC = () => {
 
 
       <Modal
-        title='Detalle del estudiante'
         isOpen={showProfileModal && !!profile}
         onClose={() => setShowProfileModal(false)}
         container={container}

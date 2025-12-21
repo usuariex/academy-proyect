@@ -16,6 +16,7 @@ export function useUpdateEvaluation(code: string, hasGradedStudents: boolean) {
         onSuccess: () => {
             // fuerza refetch de la tabla
             queryClient.invalidateQueries({ queryKey: ["evaluations"] });
+            queryClient.invalidateQueries({ queryKey: ["evaluations"] });
         },
     });
 

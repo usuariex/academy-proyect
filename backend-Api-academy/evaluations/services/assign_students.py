@@ -27,8 +27,8 @@ def eligible_students(evaluation):
 
         exercise_name = eval_exercise.exercise.exercise_name.lower().strip()
 
-        FEMALE_EXERCISES = {"100m", "abdominales", "1000m", "natacion"}
-        MALE_EXERCISES = {"100m", "barras", "1000m", "natacion"}
+        FEMALE_EXERCISES = {"100m", "abdominales", "1000m", "natacion 25m"}
+        MALE_EXERCISES = {"100m", "barras", "1000m", "natacion 25m"}
 
         if exercise_name in FEMALE_EXERCISES:
             qs = qs.filter(gender__gender_name="Femenino")

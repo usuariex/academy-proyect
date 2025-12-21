@@ -56,6 +56,8 @@ export const EvaluationForm = () => {
       description: form.description as string,
       typeId: form.typeId as number,
       statusId: form.statusId as number,
+      exerciseId: null,
+      configId: null,
     };
 
     if (isPhysicalType(form.typeId)) {
@@ -71,6 +73,10 @@ export const EvaluationForm = () => {
       }
       payload.configId = selectedConfigId;
     }
+
+    // 👇 Aquí logueas lo que realmente se va a enviar
+    console.log("Payload enviado:", payload);
+
 
     try {
       const res: Evaluation = await mutateAsync(payload);
@@ -121,9 +127,12 @@ export const EvaluationForm = () => {
               value={form.statusId ?? 1}
               onChange={(e) => handleChange("statusId", Number(e.target.value))}
             >
-              <option value={2}>Sin asignar</option>
-              <option value={1}>Pendiente</option>
+              <option value={1}>Sin asignar</option>
+              <option value={2}>Pendiente</option>
+              <option value={3}>Completada</option>
+              <option value={2}>Archivada</option>
               <option value={5}>Programada</option>
+              <option value={5}>Cancelada</option>
             </select>
           </label>
 
@@ -161,7 +170,7 @@ export const EvaluationForm = () => {
               value={selectedExerciseId ?? 0}
               onChange={(e) => setSelectedExerciseId(Number(e.target.value) || null)}
             >
-              <option value={0}>Seleccione ejercicio</option>
+              <option value={0}>Seleccione ejercicie</option>
               {exercises?.map((ex: Exercise) => (
                 <option key={ex.id} value={ex.id}>{ex.name}</option>
               ))}

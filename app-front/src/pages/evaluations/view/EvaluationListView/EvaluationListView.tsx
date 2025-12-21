@@ -199,7 +199,6 @@ export const EvaluationListView = () => {
           {selectedEvaluation ? (
             <EvaluationCard
               className={styles.card__custom}
-              evaluation={selectedEvaluation}
               onView={(ev) => {
                 setSelectedEvaluation(ev);
                 setOpenEvaluacionPanel(true);

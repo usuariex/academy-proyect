@@ -234,7 +234,6 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
             {evaluation.typeName === 'Teorica' && metrics && (
               <TheoreticalEvaluationPanel
                 students={filteredStudents}
-              /*  evaluationCode={evaluation.code} */
               />
             )}
           </>

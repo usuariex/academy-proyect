@@ -1,15 +1,24 @@
 import { formatDateTime } from '@/utilities';
 import styles from './EvaluationCard.module.css';
 import type { Evaluation } from '@/models/evaluation';
+import { useSelectedEvaluation } from '@evaluations/hooks';
 
 export interface Props {
-    evaluation: Evaluation;
+
     onView?: (evaluation: Evaluation) => void;
     onAssign?: (evaluation: Evaluation) => void;
     className?: string;
 }
 
-export const EvaluationCard = ({ evaluation, onView, onAssign, className = '' }: Props) => {
+export const EvaluationCard = ({ /* evaluation, */ onView, onAssign, className = '' }: Props) => {
+
+    const { selectedEvaluation } = useSelectedEvaluation()
+
+    if (!selectedEvaluation) {
+        return <p>No hay evaluación seleccionada</p>;
+
+    }
+    const evaluation = selectedEvaluation
     console.log(evaluation);
 
     return (

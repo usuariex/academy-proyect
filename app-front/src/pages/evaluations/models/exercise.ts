@@ -1,10 +1,10 @@
 
 export interface ExerciseResponse {
-    exercise_id: number;
+    id: number;
     name: string;
-    exercise_name: string;
     unit: string;
-    is_active: boolean;
+    isActive: boolean;
+    criteriaType: string;
 }
 
 export interface Exercise {
@@ -12,4 +12,5 @@ export interface Exercise {
     name: string;
     unit: string;
     isActive: boolean;
+    criteriaType: string;
 }

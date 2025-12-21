@@ -26,12 +26,20 @@ class EvaluationTypeSerializer(serializers.ModelSerializer):
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField(source='exercise_id', read_only=True)
     name = serializers.CharField(source='exercise_name')
+    isActive = serializers.CharField(source='is_active')
+    criteriaType = serializers.CharField(source='criteria_type')
 
     class Meta:
         model = Exercise
-        fields = '__all__'
+        fields = [
+            'id',
+            'name',
+            'unit',
+            'isActive',
+            'criteriaType',
+        ]
 
 
 class TheoryConfigSerializer(serializers.ModelSerializer):
@@ -63,18 +71,9 @@ class EvaluationSerializer(serializers.ModelSerializer):
 
     createdAt = serializers.DateTimeField(source='created_at', read_only=True)
 
-    # --- write-only inputs from the front-end ---
-    exerciseId = serializers.PrimaryKeyRelatedField(
-        write_only=True, queryset=Exercise.objects.all(), required=False, source='exercise_obj'
-    )
-    configId = serializers.PrimaryKeyRelatedField(
-        write_only=True, queryset=TheoryConfig.objects.all(), required=False, source='config_obj'
-    )
-
-    # --- read-only outputs (from related tables) ---
-    exerciseId = serializers.SerializerMethodField()
+    exerciseId = serializers.IntegerField(required=False, allow_null=True)
     exerciseName = serializers.SerializerMethodField()
-    configId = serializers.SerializerMethodField()
+    configId = serializers.IntegerField(required=False, allow_null=True)
     configName = serializers.SerializerMethodField()
     studentsCount = serializers.SerializerMethodField()
     hasGradedStudents = serializers.SerializerMethodField()
@@ -86,20 +85,20 @@ class EvaluationSerializer(serializers.ModelSerializer):
             'code', 'name', 'description',
             'typeId', 'typeName', 'statusId', 'statusName',
             'createdAt', 'plannedDate',
-            'exerciseId', 'configId',
-            'exerciseId', 'exerciseName', 'configId', 'configName', 'studentsCount', 'hasGradedStudents', 'totalQuestions'
+            'exerciseId', 'exerciseName',         # outputs
+            'configId', 'configName',             # outputs
+            'studentsCount', 'hasGradedStudents', 'totalQuestions'
         ]
 
     # ---------- read helpers ----------
+
     def get_exerciseId(self, obj):
-        ee = getattr(obj, 'evaluation_exercises', None)
-        ee = ee.first() if ee else None
+        ee = obj.evaluation_exercises.first()
         return ee.exercise_id if ee else None
 
     def get_exerciseName(self, obj):
-        ee = getattr(obj, 'evaluation_exercises', None)
-        ee = ee.select_related('exercise').first() if ee else None
-        return ee.exercise.exercise_name if ee and ee.exercise else None
+        ee = obj.evaluation_exercises.select_related('exercise').first()
+        return ee.exercise.exercise_name if ee else None
 
     def get_configId(self, obj):
         tc_qs = getattr(obj, 'theoryevaluationconfig_set', None)
@@ -134,20 +133,15 @@ class EvaluationSerializer(serializers.ModelSerializer):
     # ---------- create ----------
 
     def create(self, validated_data):
-        # extraer objetos temporales validados por PrimaryKeyRelatedField (source)
-        exercise_obj = validated_data.pop('exercise_obj', None)
-        config_obj = validated_data.pop('config_obj', None)
-
-        exercise_id = exercise_obj.pk if exercise_obj is not None else None
-        config_id = config_obj.pk if config_obj is not None else None
+        exercise_id = validated_data.pop('exerciseId', None)
+        config_id = validated_data.pop('configId', None)
 
         try:
             evaluation = create_evaluation_with_assignment(
                 validated_data,
                 exercise_id=exercise_id,
                 config_id=config_id,
-                user=self.context.get('request').user if self.context.get(
-                    'request') else None
+                user=self.context['request'].user if 'request' in self.context else None
             )
             return evaluation
         except EvaluationAssignmentError as e:
@@ -310,18 +304,21 @@ class TheoryEvaluationSerializer(serializers.ModelSerializer):
 
 
 class PhysicalEvaluationSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
+    id = serializers.IntegerField(source='physical_eval_id', read_only=True)
     studentEvaluationId = serializers.IntegerField(
         source='evaluation_student.id', read_only=True)
-    performedAt = serializers.DateField(source='performed_at')
+    performedAt = serializers.DateField(
+        source='performed_at', required=False, allow_null=True)
     exerciseUnit = serializers.CharField(
-        source='exercise.unit', read_only=True)
+        source='evaluation_student.evaluation.evaluation_exercises.exercise.unit',
+        read_only=True
+    )
     grade = serializers.DecimalField(
-        source='grade', max_digits=5, decimal_places=2, allow_null=True)
+        max_digits=5, decimal_places=2, allow_null=True)
     observations = serializers.CharField(
-        source='observations', allow_blank=True, allow_null=True)
+        required=False, allow_null=True, allow_blank=True)
     result = serializers.DecimalField(
-        source='result', max_digits=5, decimal_places=2, allow_null=True)
+        max_digits=5, decimal_places=2, allow_null=True)
 
     class Meta:
         model = PhysicalEvaluation
@@ -331,6 +328,6 @@ class PhysicalEvaluationSerializer(serializers.ModelSerializer):
             'exerciseUnit',
             'grade',
             'result',
-            'performedAt'
+            'performedAt',
             'observations',
         ]
