@@ -1,3 +1,4 @@
+from decimal import Decimal
 import rest_framework.serializers as serializers
 from .services.calculate_grade import calculate_theory_grade
 from django.db import models
@@ -199,8 +200,7 @@ class EvaluationStudentSerializer(serializers.ModelSerializer):
 
     grade = serializers.FloatField(
         read_only=True, source='annotated_grade', allow_null=True)
-    result = serializers.FloatField(
-        read_only=True, source='annotated_result', allow_null=True)
+    result = serializers.SerializerMethodField()
     observations = serializers.CharField(
         read_only=True, source='annotated_observations', allow_null=True)
     status = serializers.SerializerMethodField()
@@ -252,6 +252,25 @@ class EvaluationStudentSerializer(serializers.ModelSerializer):
                     "name": getattr(obj, "assigned_config_name", None),
                 }
         return None
+
+    def get_result(self, obj):
+        value = getattr(obj, 'annotated_result', None)
+        if value is None:
+            return None
+
+        # convertir float a Decimal
+        value_dec = Decimal(str(value))
+
+        if getattr(obj, "evaluation", None) and getattr(obj.evaluation, "type", None):
+            if obj.evaluation.type.type_name == "Fisica":
+                exercise_name = getattr(
+                    obj, "assigned_exercise_name", "").lower()
+                TIME_EXERCISES = {"100m", "1000m", "natación", "natación 25 m"}
+                if exercise_name in TIME_EXERCISES:
+                    return seconds_decimal_to_time_string(value_dec)
+                return quantity_decimal_to_string(value_dec)
+
+        return str(value_dec)
 
 
 class TheoryEvaluationSerializer(serializers.ModelSerializer):

@@ -59,7 +59,8 @@ def seconds_decimal_to_time_string(seconds: Decimal) -> str:
     """
     Convierte un Decimal de segundos en string deportivo.
     Ejemplos:
-      Decimal("208") -> "3'28"
+      Decimal("208") -> "3'28\""
+      Decimal("214") -> "3'34\""
       Decimal("14.2") -> "14\"2"
     """
     if seconds is None:
@@ -67,18 +68,18 @@ def seconds_decimal_to_time_string(seconds: Decimal) -> str:
 
     q = seconds.quantize(Decimal("0.01"))
 
-    # Si es 60 segundos o más, mostrar como minutos'segundos
+    # Si es 60 segundos o más, mostrar como minutos'segundos"
     if q >= Decimal(60):
         total = int(q)
         minutes = total // 60
         secs = total % 60
-        return f"{minutes}'{secs:02d}"
+        return f"{minutes}' {secs:02d}\""   # 👈 añadimos la comilla doble
 
     # Si es menos de 60, mostrar como segundos con opcional decimal
     int_part = int(q)
     frac = (q - Decimal(int_part)).quantize(Decimal("0.01"))
     if frac == 0:
-        return f'{int_part}"0'
+        return f'{int_part}"0'  # ej: 14"0
     frac_str = str(frac).split(".")[1].rstrip("0")
     return f'{int_part}"{frac_str}'
 

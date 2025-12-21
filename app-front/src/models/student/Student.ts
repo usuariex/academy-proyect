@@ -176,7 +176,7 @@ export interface StudentEvaluationResponse {
   studentUuid: string;
   studentFullName: string;
   grade: number | null;
-  result: number | null;
+  result: string | null;
   performedAt: string | null;
   observations?: string | null;
   status?: string | null;
@@ -190,7 +190,7 @@ export interface StudentEvaluation {
   studentUuid: string;
   studentFullName: string;
   grade: number | null;
-  result: number | null;
+  result: string | null;
   performedAt?: string | null;
   observations?: string | null;
   status?: string | null;
