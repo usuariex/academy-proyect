@@ -19,7 +19,6 @@ export const EvaluationCard = ({ /* evaluation, */ onView, onAssign, className =
 
     }
     const evaluation = selectedEvaluation
-    console.log(evaluation);
 
     return (
         <div

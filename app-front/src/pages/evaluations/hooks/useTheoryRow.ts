@@ -4,14 +4,16 @@ import type { StudentEvaluation } from "@/models/student";
 import { updateTheoryEvaluationByStudent } from "@/services/evaluation";
 import { TheoryEvaluationMergeAdapter } from "@/adapters/evaluation";
 import { useSelectedEvaluation } from "@evaluations/hooks";
+import { formatResult } from "@/utilities";
 
 export const useTheoryRow = (base: StudentEvaluation) => {
+
     const [row, setRow] = useState<StudentEvaluation>(base);
     const [isEditing, setEditing] = useState(false);
-    const [draftResult, setDraftResult] = useState<number | null>(row.result);
+    const [draftResult, setDraftResult] = useState<string | null>(formatResult(row.result));
 
     const queryClient = useQueryClient();
-    const { selectedEvaluation } = useSelectedEvaluation(); // 👈 acceso al objeto completo
+    const { selectedEvaluation } = useSelectedEvaluation();
 
     const mutation = useMutation({
         mutationFn: async (payload: any) => {

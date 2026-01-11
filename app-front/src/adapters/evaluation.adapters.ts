@@ -81,6 +81,9 @@ export const EvaluationSummaryAdapter = (data: EvaluationSummaryResponse) => {
 
 
 
+
+
+
 export const EvaluationAdapter = (data: EvaluationResponse) => {
   const formatedEvaluation: Evaluation = {
     code: data.code,
@@ -98,7 +101,8 @@ export const EvaluationAdapter = (data: EvaluationResponse) => {
     createdAt: data.createdAt,
     studentsCount: data.studentsCount,
     hasGradedStudents: data.hasGradedStudents,
-    totalQuestions: data.totalQuestions
+    totalQuestions: data.totalQuestions,
+    exerciseUnit: data.exerciseUnit,
   };
   return formatedEvaluation
 }

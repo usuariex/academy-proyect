@@ -39,70 +39,72 @@ export function AssignStudentsModal({ isOpen, onClose }: AssignStudentsModalProp
     if (!isOpen || !evaluationCode) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} containerClassName={styles.container__custom}>
-            <div className={styles.modal}>
-                <h2 className={styles.title}>Editar estudiantes asignados</h2>
-
-                {isLoading ? (
-                    <p>Cargando estudiantes...</p>
-                ) : (
-                    <div className={styles.listsContainer}>
-                        {/* Lista de asignados */}
-                        <div className={styles.list}>
-                            <h3>Asignados</h3>
-                            <ul>
-                                {assigned.map((student) => (
-                                    <li
-                                        key={student.studentUuid}
-                                        className={`${styles.item} ${selectedToRemove.includes(student.studentUuid) ? styles.selectedRemove : ""
-                                            }`}
-                                        onClick={() =>
-                                            setSelectedToRemove((prev) =>
-                                                prev.includes(student.studentUuid)
-                                                    ? prev.filter((u) => u !== student.studentUuid)
-                                                    : [...prev, student.studentUuid]
-                                            )
-                                        }
-                                    >
-                                        {student.studentFullName}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-
-                        {/* Lista de disponibles */}
-                        <div className={styles.list}>
-                            <h3>Disponibles</h3>
-                            <ul>
-                                {available.map((student) => (
-                                    <li
-                                        key={student.uuid}
-                                        className={`${styles.item} ${selectedToAdd.includes(student.uuid) ? styles.selectedAdd : ""
-                                            }`}
-                                        onClick={() =>
-                                            setSelectedToAdd((prev) =>
-                                                prev.includes(student.uuid)
-                                                    ? prev.filter((u) => u !== student.uuid)
-                                                    : [...prev, student.uuid]
-                                            )
-                                        }
-                                    >
-                                        {student.fullName}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            containerClassName={styles.container__custom}
+            overlayClassName={styles.overlay__custom}
+        >
+            <h2 className={styles.title}>Editar estudiantes asignados</h2>
+            {isLoading ? (
+                <p>Cargando estudiantes...</p>
+            ) : (
+                <div className={styles.listsContainer}>
+                    {/* Lista de asignados */}
+                    <div className={styles.list}>
+                        <h3>Asignados</h3>
+                        <ul>
+                            {assigned.map((student) => (
+                                <li
+                                    key={student.studentUuid}
+                                    className={`${styles.item} ${selectedToRemove.includes(student.studentUuid) ? styles.selectedRemove : ""
+                                        }`}
+                                    onClick={() =>
+                                        setSelectedToRemove((prev) =>
+                                            prev.includes(student.studentUuid)
+                                                ? prev.filter((u) => u !== student.studentUuid)
+                                                : [...prev, student.studentUuid]
+                                        )
+                                    }
+                                >
+                                    {student.studentFullName}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                )}
 
-                <div className={styles.actions}>
-                    <button className={styles.cancelBtn} onClick={onClose}>
-                        Cancelar
-                    </button>
-                    <button className={styles.saveBtn} onClick={handleSave}>
-                        Guardar cambios
-                    </button>
+                    {/* Lista de disponibles */}
+                    <div className={styles.list}>
+                        <h3>Disponibles</h3>
+                        <ul>
+                            {available.map((student) => (
+                                <li
+                                    key={student.uuid}
+                                    className={`${styles.item} ${selectedToAdd.includes(student.uuid) ? styles.selectedAdd : ""
+                                        }`}
+                                    onClick={() =>
+                                        setSelectedToAdd((prev) =>
+                                            prev.includes(student.uuid)
+                                                ? prev.filter((u) => u !== student.uuid)
+                                                : [...prev, student.uuid]
+                                        )
+                                    }
+                                >
+                                    {student.fullName}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
+            )}
+
+            <div className={styles.actions}>
+                <button className={styles.cancelBtn} onClick={onClose}>
+                    Cancelar
+                </button>
+                <button className={styles.saveBtn} onClick={handleSave}>
+                    Guardar cambios
+                </button>
             </div>
         </Modal>
     );

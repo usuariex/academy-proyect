@@ -1,34 +1,40 @@
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import type { FC } from 'react';
 import { Modal } from '@/components/modals';
-import { MetricsPanel } from '@/components/data-display';
+import { AssignStudentsModal, MetricsPanel } from '@evaluations/components';
 import { Tabs } from '@/components/layout';
 import { useStudentsByEvaluation } from '@/hooks/students';
 import type { StudentEvaluation } from '@/models/student';
-import type { Evaluation, StatusGrade, } from '@/models/evaluation';
+import type { StatusGrade, } from '@/models/evaluation';
 import { classifyGradeStatus } from '@/utilities/evaluation';
 import { SearchInput, SelectField } from '@/components/forms';
 import styles from './EvaluationPanelView.module.css';
-import { useEvaluationSummary } from '@evaluations/hooks';
+import { useEvaluationSummary, useSelectedEvaluation } from '@evaluations/hooks';
 
 import { PhysicalEvaluationPanel, TheoreticalEvaluationPanel } from '@evaluations/view';
 import { StudentsByEvaluationTable } from '@evaluations/components';
 import { FilterChips } from '@/components/ui';
 import { buildFilterChips } from '@/utilities';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 
 type TabKey = 'grades' | 'evaluate' | 'others';
 
 interface Props {
-  evaluation: Evaluation;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) => {
+export const EvaluationPanelView: FC<Props> = ({ isOpen, onClose }) => {
+
+  const nestedRef = useRef<HTMLDivElement | null>(null);
+  const [nestedContainer, setNestedContainer] = useState<HTMLDivElement | null>(null);
+  useEffect(() => { if (nestedRef.current) { setNestedContainer(nestedRef.current); } }, [nestedRef]);
 
   const [activeTab, setActiveTab] = useState<TabKey>('grades');
+  const [OpenAssignStudents, setOpenAssignStudents] = useState<boolean>(false);
 
   const [resultFilter, setResultFilter] = useState<'Todos' | StatusGrade>('Todos');
   const [gradedFilter, setGradedFilter] = useState<'Todos' | 'Calificado' | 'No calificado'>('Todos');
@@ -36,10 +42,15 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
 
   const [search, setSearch] = useState('');
 
+  const { selectedEvaluation } = useSelectedEvaluation()
+  if (!selectedEvaluation) {
+    return <p>No hay evaluación seleccionada</p>;
+  }
+  const evaluation = selectedEvaluation
 
 
   // Data hooks
-  const { data, isLoading: studentsLoading, error: studentsError/* , refetch  */ } = useStudentsByEvaluation(evaluation.code, 1, 20);
+  const { data, isLoading: studentsLoading, error: studentsError } = useStudentsByEvaluation(evaluation.code, 1, 20);
   const students = data?.assigned ?? [];
 
 
@@ -70,6 +81,7 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
       return true;
     });
   }, [students, resultFilter, gradedFilter, search]);
+
 
 
 
@@ -125,18 +137,23 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <div ref={nestedRef} />
+
       <header className={styles.header}>
         <h4 className={styles.title}>
           {evaluation.name}
         </h4>
         <div className={styles.meta}>
-          <span className={styles.type}>{evaluation.name}</span>
-          {evaluation.plannedDate && (
-            <time className={styles.date} dateTime={evaluation.plannedDate}>
-              {evaluation.plannedDate}
-            </time>
-          )}
+          <span className={styles.code}>{evaluation.code}</span>
+          <div className={styles.exerciseName}>
+            {evaluation.exerciseName && (
+              evaluation.exerciseName
+            )}
+          </div>
           <span className={styles.status}>{evaluation.statusName}</span>
         </div>
       </header>
@@ -179,6 +196,11 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
 
 
           <div className={styles.filters__selects}>
+            {activeTab === 'grades' && (
+              <div className={styles.containerAddUser} onClick={() => setOpenAssignStudents(true)}>
+                <FontAwesomeIcon className={styles.iconAddUser} icon={faUserPlus} />
+              </div>)}
+
             <SelectField
               id="result"
               label="Resultado"
@@ -242,6 +264,13 @@ export const EvaluationPanelView: FC<Props> = ({ evaluation, isOpen, onClose }) 
 
         {activeTab === 'others' && <div>Other information</div>}
       </div>
+
+      {OpenAssignStudents && selectedEvaluation && nestedContainer && (
+        <AssignStudentsModal
+          isOpen={OpenAssignStudents}
+          onClose={() => setOpenAssignStudents(false)}
+        />
+      )}
     </Modal>
   );
 };

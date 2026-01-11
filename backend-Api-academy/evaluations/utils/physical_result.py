@@ -62,6 +62,7 @@ def seconds_decimal_to_time_string(seconds: Decimal) -> str:
       Decimal("208") -> "3'28\""
       Decimal("214") -> "3'34\""
       Decimal("14.2") -> "14\"2"
+      Decimal("14.0") -> "14\""
     """
     if seconds is None:
         return ""
@@ -73,15 +74,15 @@ def seconds_decimal_to_time_string(seconds: Decimal) -> str:
         total = int(q)
         minutes = total // 60
         secs = total % 60
-        return f"{minutes}' {secs:02d}\""   # 👈 añadimos la comilla doble
+        return f"{minutes}'{secs:02d}\""
 
     # Si es menos de 60, mostrar como segundos con opcional decimal
     int_part = int(q)
     frac = (q - Decimal(int_part)).quantize(Decimal("0.01"))
     if frac == 0:
-        return f'{int_part}"0'  # ej: 14"0
+        return f'{int_part}\"'   # 👈 solo segundos enteros, ej: 14"
     frac_str = str(frac).split(".")[1].rstrip("0")
-    return f'{int_part}"{frac_str}'
+    return f'{int_part}\"{frac_str}'
 
 
 def quantity_decimal_to_string(value: Decimal) -> str:

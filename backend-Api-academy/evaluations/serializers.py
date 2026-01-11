@@ -78,6 +78,7 @@ class EvaluationSerializer(serializers.ModelSerializer):
 
     exerciseId = serializers.IntegerField(required=False, allow_null=True)
     exerciseName = serializers.SerializerMethodField()
+    exerciseUnit = serializers.SerializerMethodField()
     configId = serializers.IntegerField(required=False, allow_null=True)
     configName = serializers.SerializerMethodField()
     studentsCount = serializers.SerializerMethodField()
@@ -92,10 +93,13 @@ class EvaluationSerializer(serializers.ModelSerializer):
             'createdAt', 'plannedDate',
             'exerciseId', 'exerciseName',
             'configId', 'configName',
-            'studentsCount', 'hasGradedStudents', 'totalQuestions'
+            'studentsCount', 'hasGradedStudents', 'totalQuestions', 'exerciseUnit'
         ]
 
     # ---------- read helpers ----------
+    def get_exerciseUnit(self, obj):
+        ee = obj.evaluation_exercises.first()
+        return ee.exercise.unit if ee and ee.exercise else None
 
     def get_exerciseId(self, obj):
         ee = obj.evaluation_exercises.first()
@@ -300,10 +304,7 @@ class TheoryEvaluationSerializer(serializers.ModelSerializer):
         allow_blank=True,
         allow_null=True,
     )
-    result = serializers.IntegerField(
-        required=False,
-        allow_null=True
-    )
+    result = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
         model = TheoryEvaluation
@@ -316,6 +317,20 @@ class TheoryEvaluationSerializer(serializers.ModelSerializer):
             'result',
             'observations',
         ]
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        value = instance.result
+
+        if value is None:
+            data["result"] = None
+            return data
+
+        if isinstance(value, (Decimal, float, int)):
+            data["result"] = format(value, "f").rstrip("0").rstrip(".")
+        else:
+            data["result"] = str(value)
+        return data
 
     def create(self, validated_data):
         result = validated_data.get("result")
@@ -349,17 +364,18 @@ class PhysicalEvaluationSerializer(serializers.ModelSerializer):
     observations = serializers.CharField(
         required=False, allow_null=True, allow_blank=True)
 
-    # 👉 Sobrescribimos el campo result para que devuelva el string formateado
     result = serializers.SerializerMethodField()
+    evaluationId = serializers.SerializerMethodField()
 
     class Meta:
         model = PhysicalEvaluation
         fields = [
             'id',
             'studentEvaluationId',
+            'evaluationId',
             'exerciseUnit',
             'grade',
-            'result',        # único campo, ya formateado
+            'result',
             'performedAt',
             'observations',
         ]
@@ -392,3 +408,12 @@ class PhysicalEvaluationSerializer(serializers.ModelSerializer):
             return seconds_decimal_to_time_string(obj.result)
 
         return quantity_decimal_to_string(obj.result)
+
+    def get_evaluationId(self, obj):
+        """
+        Devuelve el ID de la evaluación asociada al estudiante.
+        """
+        eval_student = getattr(obj, "evaluation_student", None)
+        if eval_student and eval_student.evaluation:
+            return eval_student.evaluation.id
+        return None

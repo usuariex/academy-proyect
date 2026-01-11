@@ -1,4 +1,4 @@
-// adapters/evaluation.ts
+
 import type { TheoryEvaluation } from "@evaluations/models";
 import type { StudentEvaluation } from "@/models/student";
 
@@ -12,5 +12,22 @@ export const TheoryEvaluationMergeAdapter = (
         result: model.result,
         observations: model.observations,
         grade: model.grade, // ya es number | null
+    };
+};
+
+
+
+import type { PhysicalEvaluation } from "@evaluations/models";
+
+export const PhysicalEvaluationMergeAdapter = (
+    model: PhysicalEvaluation,
+    base: StudentEvaluation
+): StudentEvaluation => {
+    return {
+        ...base,
+        performedAt: model.performedAt,
+        result: model.result,
+        observations: model.observations,
+        grade: model.grade, // number | null
     };
 };

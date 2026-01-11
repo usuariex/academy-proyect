@@ -26,6 +26,7 @@ export interface EvaluationResponse {
   studentsCount: number;
   hasGradedStudents: boolean;
   totalQuestions: number | null;
+  exerciseUnit: string | null;
 }
 
 export interface Evaluation {
@@ -45,6 +46,7 @@ export interface Evaluation {
   studentsCount: number;
   hasGradedStudents: boolean;
   totalQuestions: number | null;
+  exerciseUnit: string | null;
 }
 
 

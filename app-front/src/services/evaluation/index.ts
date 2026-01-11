@@ -1,4 +1,5 @@
 export * from './evaluation.service';
 export * from './exercises.service';
 export * from './theoreticalEvaluation.service';
-export * from './theoryConfig';  
+export * from './theoryConfig';
+export * from './physicalEvaluation.service';  

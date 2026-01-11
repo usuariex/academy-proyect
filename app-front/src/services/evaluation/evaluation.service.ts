@@ -142,23 +142,3 @@ export const removeStudentsFromEvaluation = async (code: string, payload: Remove
   return data;
 };
 
-
-
-
-
-
-
-
-/* ================================================================================== */
-
-
-
-/* export const postGradeForStudent = async (studentEvaluationId: number, payload: { finalGrade: number }) => {
-  const { data } = await api.post(`/students/${studentEvaluationId}/calificaciones`, payload);
-  return mapStudentsList([data])[0];
-};
-
-export const putStudent = async (studentEvaluationId: number, payload: Partial<StudentEvaluation>) => {
-  const { data } = await api.put(`/students/${studentEvaluationId}/`, payload);
-  return mapStudentsList([data])[0];
-}; */

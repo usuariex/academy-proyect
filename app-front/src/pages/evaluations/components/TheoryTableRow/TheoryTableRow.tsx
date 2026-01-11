@@ -5,6 +5,7 @@ import { useTheoryRow } from "@evaluations/hooks";
 import { BaseActionButton } from "@/components/ui";
 import styles from "./TheoryTableRow.module.css";
 import { evaluationActions } from "@evaluations/constants";
+import { formatResult } from '@/utilities';
 
 interface Props {
   row: StudentEvaluation;
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export const TheoryTableRow = ({ row: student }: Props) => {
+
   const {
     row,
     isEditing,
@@ -33,7 +35,7 @@ export const TheoryTableRow = ({ row: student }: Props) => {
 
   function handleResultChange(e: ChangeEvent<HTMLInputElement>) {
     const val = e.target.value;
-    setDraftResult(val === "" ? null : Number(val));
+    setDraftResult(val);
   }
 
 
@@ -47,19 +49,22 @@ export const TheoryTableRow = ({ row: student }: Props) => {
       <td className={styles.cell} onClick={handleResultClick}>
         {isEditing ? (
           <input
-            type="number"
+            type="text" // 👈 ahora texto, porque el resultado es "15/20"
             value={draftResult ?? ""}
             onChange={handleResultChange}
             className={styles.input}
+            placeholder="Ej: 15/20"
           />
         ) : (
           <>
-            {typeof row.result === "number" && row.result > 0
-              ? row.result
+            {row.result && row.result.trim() !== ""
+              ? formatResult(row.result)
               : <span className={styles.icon}>✏️</span>}
           </>
         )}
       </td>
+
+
 
       <td className={`${styles.cell} ${styles.actions}`}>
         {isEditing ? (

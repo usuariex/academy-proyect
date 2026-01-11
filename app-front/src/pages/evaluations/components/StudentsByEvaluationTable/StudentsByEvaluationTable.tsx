@@ -3,6 +3,7 @@ import type { StudentEvaluation } from '@/models/student';
 import styles from './StudentsByEvaluationTable.module.css';
 import type { Column } from '@/models/ui';
 import { DataTable, DataTableRow } from '@/components/data-display';
+import { useSelectedEvaluation } from '@evaluations/hooks';
 
 
 interface Props {
@@ -12,7 +13,13 @@ interface Props {
 
 export const StudentsByEvaluationTable = ({ students }: Props) => {
 
-  const Exercise = students.find(s => typeof s.exerciseName === 'string' && s.exerciseName.trim() !== '')?.exerciseName ?? null;
+  const { selectedEvaluation } = useSelectedEvaluation()
+
+  if (!selectedEvaluation) {
+    return <p>No hay evaluación seleccionada</p>;
+
+  }
+  const evaluation = selectedEvaluation
 
   const columns: Column<StudentEvaluation>[] = [
     { key: "studentFullName", label: "Alumno", render: (value) => value },
@@ -31,7 +38,7 @@ export const StudentsByEvaluationTable = ({ students }: Props) => {
       )
     },
     { key: "grade", label: "Calificación ", render: (value) => value ?? "-" },
-    { key: "result", label: `${Exercise ?? "Respuestas correctas"}`, render: (value) => value ?? "-" },
+    { key: "result", label: `${evaluation.exerciseUnit ?? "Respuestas correctas"}`, render: (value) => value ?? "-" },
     { key: "observations", label: "Observaciones", render: (value) => value ?? "-" },
   ];
 

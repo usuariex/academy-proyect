@@ -1,11 +1,21 @@
-.modal {
-    background: #fff;
-    border-radius: 8px;
-    max-width: 90%;
-    padding: 1.5rem;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-    animation: fadeIn 0.3s ease;
+.overlay__custom {
+    justify-content: center;
+    align-items: center;
 }
+
+.container__custom {
+    background: #f4f4f4;
+    border: 1px solid rgba(120, 144, 156, 0.2);
+    box-shadow: 0 22px 40px rgba(0, 0, 0, 0.45);
+    height: 80%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    animation: modal-enter 160ms ease-out;
+}
+
+
 
 .title {
     margin-bottom: 1rem;

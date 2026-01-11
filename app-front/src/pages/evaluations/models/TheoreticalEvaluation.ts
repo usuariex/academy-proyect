@@ -3,14 +3,14 @@ export interface TheoryEvaluationResponse {
     studentEvaluationId: number;
     evaluationId: number;
     performedAt: string | null;
-    grade: string | null;   // viene como string
-    result: number | null;
+    grade: string | null;
+    result: string | null;
     observations: string | null;
 }
 
 export interface TheoryEvaluationRequest {
     studentEvaluationId: number;
-    result: number;
+    result: string;
     observations?: string | null;
     performedAt?: string | null;
 }
@@ -20,7 +20,7 @@ export interface TheoryEvaluation {
     studentEvaluationId: number;
     evaluationId: number;
     performedAt: string | null;
-    grade: number | null;        // normalizado a number
-    result: number | null;
+    grade: number | null;
+    result: string | null;
     observations: string | null;
 }

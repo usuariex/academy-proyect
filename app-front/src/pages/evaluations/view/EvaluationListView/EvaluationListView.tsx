@@ -119,7 +119,6 @@ export const EvaluationListView = () => {
     <SelectedEvaluationProvider selectedEvaluation={selectedEvaluation}>
 
       <div className={styles.evaluationList}>
-        {/* 🔹 Barra de filtros */}
         <div className={styles.filtersBar}>
           <SearchInput
             className={styles.searchInput}

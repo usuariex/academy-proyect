@@ -1,5 +1,6 @@
 export * from './theoryConfig.adapter'
 export * from './theoryEvaluation.adapters'
-export * from './theoryEvaluationMerge.adapter'
+export * from './evaluationMerge.adapter'
 export * from './evaluationStatus.adapter'
 export * from './assignStudents.adapter'
+export * from './physicalEvaluation.adapter'

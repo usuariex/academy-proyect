@@ -1,3 +1,4 @@
+from statistics import mean, median, stdev
 from decimal import Decimal
 from django.shortcuts import get_object_or_404
 from .services.assign_students import assign_students, eligible_students
@@ -75,43 +76,63 @@ class EvaluationViewSet(viewsets.ModelViewSet):
         evaluation = self.get_object()
         students = EvaluationStudent.objects.filter(evaluation=evaluation)
 
-        # recolectar calificaciones según tipo
+        records = []
         grades = []
+
         for s in students:
-            if evaluation.type.type_name == "Teorica":
+            if evaluation.type.type_name == "Fisica":
+                pe = PhysicalEvaluation.objects.filter(
+                    evaluation_student=s
+                ).values("grade", "result").first()
+                if pe:
+                    grade_val = pe["grade"]
+                    result_val = pe["result"]
+                    if grade_val is not None:
+                        grades.append(float(grade_val))
+                    if grade_val is not None and result_val is not None:
+                        records.append({
+                            "student": s.student.full_name,
+                            "grade": float(grade_val),
+                            "time": float(result_val),
+                            "status": s.get_status()
+                        })
+            elif evaluation.type.type_name == "Teorica":
                 grade = TheoryEvaluation.objects.filter(
                     evaluation_student=s
-                ).values_list('grade', flat=True).first()
-            elif evaluation.type.type_name == "Fisica":
-                grade = PhysicalEvaluation.objects.filter(
-                    evaluation_student=s
-                ).values_list('grade', flat=True).first()
-            else:
-                grade = None
-            if grade is not None:
-                grades.append(float(grade))
+                ).values_list("grade", flat=True).first()
+                if grade is not None:
+                    grades.append(float(grade))
 
-        # métricas básicas
         total = students.count()
-        approved = sum(1 for s in students if s.get_status() == "aprobado")
-        failed = sum(1 for s in students if s.get_status() == "desaprobado")
-        ungraded = sum(1 for s in students if s.get_status() == "sinCalificar")
 
-        # distribución de notas
+        approved = 0
+        failed = 0
+        ungraded = 0
+
+        for s in students:
+            status = s.get_status()
+            if status:
+                normalized = status.strip().lower()
+                if normalized == "aprobado":
+                    approved += 1
+                elif normalized == "desaprobado":
+                    failed += 1
+                elif normalized in ("sin calificar", "sincalificar"):
+                    ungraded += 1
+
         grade_distribution = {
             "0-10": sum(1 for g in grades if g <= 10),
             "11-15": sum(1 for g in grades if 11 <= g <= 15),
             "16-20": sum(1 for g in grades if g >= 16),
         }
 
-        # distribución de estados en porcentaje
         status_distribution = {
             "approved": round((approved / total) * 100, 2) if total else 0,
             "failed": round((failed / total) * 100, 2) if total else 0,
             "ungraded": round((ungraded / total) * 100, 2) if total else 0,
         }
 
-        return Response({
+        response_data = {
             "code": evaluation.code,
             "evaluationName": evaluation.name,
             "evaluationType": evaluation.type.type_name,
@@ -127,7 +148,20 @@ class EvaluationViewSet(viewsets.ModelViewSet):
             "medianGrade": median(grades) if grades else None,
             "gradeDistribution": grade_distribution,
             "statusDistribution": status_distribution,
-        })
+        }
+
+        # Solo para físicas: ranking y scatter
+        if evaluation.type.type_name == "Fisica" and records:
+            response_data.update({
+                "topByGrade": sorted(records, key=lambda r: r["grade"], reverse=True)[:5],
+                "topByTime": sorted(records, key=lambda r: r["time"])[:5],
+                "scatterData": records,
+                "averageTime": mean(r["time"] for r in records),
+                "minTime": min(r["time"] for r in records),
+                "maxTime": max(r["time"] for r in records),
+            })
+
+        return Response(response_data)
 
     @action(detail=True, methods=["get"], url_path="students")
     def students(self, request, code=None):

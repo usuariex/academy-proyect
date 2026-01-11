@@ -13,6 +13,7 @@ export interface ModalProps {
   closeOnOverlay?: boolean;
   containerClassName?: string;
   contentClassName?: string;
+  overlayClassName?: string;
   container?: HTMLElement;
 }
 
@@ -23,6 +24,7 @@ export const Modal = ({
   closeOnOverlay = true,
   containerClassName = '',
   contentClassName = '',
+  overlayClassName = '',
   container,
 }: ModalProps) => {
 
@@ -70,7 +72,7 @@ export const Modal = ({
 
   const modalContent = (
     <div
-      className={styles.overlay}
+      className={`${styles.overlay} ${overlayClassName}`}
       onClick={handleOverlayClick}
     >
       <div
@@ -91,6 +93,7 @@ export const Modal = ({
         </div>
       </div>
     </div>
+
   );
 
 
